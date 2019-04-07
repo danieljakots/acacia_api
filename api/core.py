@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 from flask import Flask, jsonify, request
-# from .tools import require_appkey, require_auth
-from tools import require_appkey, require_auth
+from .tools import require_appkey, require_auth, db_connect
+# from tools import require_appkey, require_auth, db_connect
 
 import psycopg2
 
