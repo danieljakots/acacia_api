@@ -1,0 +1,3 @@
+curl -H https://api.chown.me/ip
+curl -H 'key: blih' https://api.chown.me/ban-pf
+curl -u qwe:qwe -i -X POST https://api.chown.me/post -d "dede=qwewqe" -d "coin=canard" -d "cdscodskmodsmco=dsfndsods"
