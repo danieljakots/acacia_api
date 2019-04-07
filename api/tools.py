@@ -4,8 +4,10 @@ from flask import request, abort
 
 
 def nope():
-    fake_msg = ("java.lang.NullPointerException: Attempt to invoke "
-                "API method on a null object reference")
+    fake_msg = (
+        "java.lang.NullPointerException: Attempt to invoke "
+        "API method on a null object reference"
+    )
     abort(503, fake_msg)
 
 
@@ -14,10 +16,11 @@ def require_appkey(view_function):
     @wraps(view_function)
     # the new, post-decoration function. Note *args and **kwargs here.
     def decorated_function(*args, **kwargs):
-        if request.headers.get('key') and request.headers.get('key') == "blih":
+        if request.headers.get("key") and request.headers.get("key") == "blih":
             return view_function(*args, **kwargs)
         else:
             nope()
+
     return decorated_function
 
 
@@ -29,7 +32,7 @@ def check_auth(username, password):
     password combination is valid.
     """
     print(username, password)
-    return username == 'qwe' and password == 'qwe'
+    return username == "qwe" and password == "qwe"
 #     conn = sqlite3.connect('/home/api/api.db')
 #     c = conn.cursor()
 #     c.execute("SELECT password, active FROM users WHERE user=?",
