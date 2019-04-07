@@ -1,6 +1,9 @@
 from functools import wraps
+import os
 
 from flask import request, abort
+
+import psycopg2
 
 
 def nope():
@@ -55,3 +58,15 @@ def require_auth(f):
         return f(*args, **kwargs)
 
     return decorated
+
+
+def db_connect():
+    host = os.getenv("PG_HOST", "127.0.0.1")
+    database = os.getenv("PG_DB", "api")
+    user = os.getenv("PG_USER", "api")
+    password = os.getenv("PG_PASSWORD")
+    port = os.getenv("PG_PORT", "5432")
+    database = psycopg2.connect(
+        host=host, database=database, user=user, password=password, port=port
+    )
+    return database

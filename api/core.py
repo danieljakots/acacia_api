@@ -4,7 +4,6 @@ from flask import Flask, jsonify, request
 from .tools import require_appkey, require_auth, db_connect
 # from tools import require_appkey, require_auth, db_connect
 
-import psycopg2
 
 app = Flask(__name__)
 
@@ -43,19 +42,16 @@ def headers():
 
 # CREATE TABLE pf_ip_ban (id SERIAL PRIMARY KEY, ip INET, updated_at timestamp without time zone, source character varying);
 # INSERT INTO pf_ip_ban (ip, updated_at, source) VALUES ('209.229.0.0/16', '2019-04-07 11:11:25-07', 'emerging');
-@app.route("/ban-pf")
+@app.route("/v1/ban-pf", methods=("GET",))
 @require_appkey
 def ban_pf():
-    database = psycopg2.connect(
-        database="api",
-        user="api",
-        password="Hjh3JSz5arHziC3kqAiyUC3g",
-        host="localhost",
-        port="5432",
-    )
+    database = db_connect()
     cursor = database.cursor()
-    cursor.execute("select * from pf_ip_ban;")
+    cursor.execute("select ip from pf_ip_ban;")
     results = cursor.fetchall()
+    cursor.close()
+    database.commit()
+    database.close()
     print(results)
     return jsonify(results)
 
