@@ -27,9 +27,6 @@ def require_appkey(view_function):
     return decorated_function
 
 
-# CREATE TABLE users (user TEXT, password TEXT, active INTEGER);
-# INSERT INTO users
-# VALUES (testbotirc3, 8d604831-623a-4e1b-b82a-618d82b18d5a, 1);
 def check_auth(username, password):
     """This function is called to check if a username /
     password combination is valid.
