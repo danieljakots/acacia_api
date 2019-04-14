@@ -31,6 +31,18 @@ def post():
     return resp
 
 
+@app.route("/post-test", methods=("POST",))
+@require_auth
+def post_test():
+    if request.form:
+        resp = jsonify(request.form.to_dict())
+        return resp
+    if request.json:
+        resp = jsonify(request.get_json())
+        return resp
+    return ("nope")
+
+
 @app.route("/ua")
 def ua():
     headers = dict(request.headers.items())
