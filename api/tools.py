@@ -1,3 +1,4 @@
+import datetime
 from functools import wraps
 import os
 
@@ -67,3 +68,39 @@ def db_connect():
         host=host, database=database, user=user, password=password, port=port
     )
     return database
+
+
+def ip_get():
+    database = db_connect()
+    cursor = database.cursor()
+    cursor.execute("select ip from pf_ip_ban;")
+    results = cursor.fetchall()
+    cursor.close()
+    database.commit()
+    database.close()
+    return results
+
+
+def ip_add(IP, source):
+    time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    if "/" not in IP:
+        IP = IP + "/32"
+    values = (IP, time, source)
+
+    database = db_connect()
+    cursor = database.cursor()
+    try:
+        cursor.execute(
+            "INSERT INTO pf_ip_ban (ip, updated_at, source) VALUES (%s, %s, %s);",
+            values,
+        )
+    # Most likely a problem with the CIDR
+    except psycopg2.DataError as e:
+        return (str(e), 400)
+    # Unicity clause
+    except psycopg2.IntegrityError as e:
+        return (str(e), 200)
+    cursor.close()
+    database.commit()
+    database.close()
+    return ("", 204)
