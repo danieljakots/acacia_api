@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 
-from flask import Flask, jsonify, request
+import datetime
+
+from flask import Flask, jsonify, request, abort
+import psycopg2
+
 from .tools import require_appkey, require_auth, db_connect
 # from tools import require_appkey, require_auth, db_connect
 
@@ -51,6 +55,29 @@ def ban_pf_get():
     database.commit()
     database.close()
     return jsonify(results)
+
+
+@app.route("/v1/ban-pf", methods=("POST",))
+@require_appkey
+def ban_pf_post():
+    post_data = request.form.to_dict()
+    if "IP" not in post_data.keys() or "source" not in post_data.keys():
+        abort(400)
+    time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    values = (post_data["IP"], time, post_data["source"])
+    database = db_connect()
+    cursor = database.cursor()
+    try:
+        cursor.execute(
+            "INSERT INTO pf_ip_ban (ip, updated_at, source) VALUES (%s, %s, %s);",
+            values,
+        )
+    except psycopg2.IntegrityError:
+        return (jsonify("IP was already there"), 200)
+    cursor.close()
+    database.commit()
+    database.close()
+    return ("", 204)
 
 
 if __name__ == "__main__":
