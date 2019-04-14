@@ -104,3 +104,16 @@ def ip_add(IP, source):
     database.commit()
     database.close()
     return ("", 204)
+
+
+def ip_delete(IP):
+    if "/" not in IP:
+        IP = IP + "/32"
+    values = (IP,)
+    database = db_connect()
+    cursor = database.cursor()
+    cursor.execute("DELETE FROM pf_ip_ban WHERE IP=%s;", values)
+    cursor.close()
+    database.commit()
+    database.close()
+    return ("", 204)

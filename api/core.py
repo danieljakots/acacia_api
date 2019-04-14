@@ -2,8 +2,8 @@
 
 from flask import Flask, jsonify, request, make_response
 
-from .tools import require_appkey, require_auth, ip_get, ip_add
-# from tools import require_appkey, require_auth, ip_get, ip_add
+from .tools import require_appkey, require_auth, ip_get, ip_add, ip_delete
+# from tools import require_appkey, require_auth, ip_get, ip_add, ip_delete
 
 
 app = Flask(__name__)
@@ -86,6 +86,20 @@ def pf_post():
         if any_204 == 1:
             status_code = 204
     return (jsonify(message), status_code)
+
+
+@app.route("/v1/pf", methods=("DELETE",))
+@require_appkey
+def pf_delete():
+    if request.json:
+        data = request.get_json()
+        for entry in data:
+            try:
+                IP = entry["IP"]
+            except KeyError:
+                return make_response(jsonify({"error": "Bad Request"}), 400)
+            ip_delete(IP)
+    return ("", 204)
 
 
 if __name__ == "__main__":
