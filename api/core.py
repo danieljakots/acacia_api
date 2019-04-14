@@ -63,10 +63,23 @@ def pf_get():
 @app.route("/v1/pf", methods=("POST",))
 @require_appkey
 def pf_post():
-    post_data = request.form.to_dict()
-    if "IP" not in post_data.keys() or "source" not in post_data.keys():
-        abort(400)
-    (message, status_code) = ip_add(post_data["IP"], post_data["source"])
+    if request.form:
+        post_data = request.form.to_dict()
+        if "IP" not in post_data.keys() or "source" not in post_data.keys():
+            abort(400)
+        (message, status_code) = ip_add(post_data["IP"], post_data["source"])
+    if request.json:
+        data = request.get_json()
+        any_204 = 0
+        for entry in data:
+            (message, status_code) = ip_add(entry["IP"], entry["source"])
+            if status_code == 400:
+                return (jsonify(message), status_code)
+            elif status_code == 204:
+                any_204 = 1
+        # As long we had at least one 204, that's what we will return
+        if any_204 == 1:
+            status_code = 204
     return (jsonify(message), status_code)
 
 
