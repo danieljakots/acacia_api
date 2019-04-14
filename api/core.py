@@ -46,7 +46,7 @@ def headers():
 # '2019-04-07 11:11:25-07', 'emerging');
 @app.route("/v1/ban-pf", methods=("GET",))
 @require_appkey
-def ban_pf():
+def ban_pf_get():
     database = db_connect()
     cursor = database.cursor()
     cursor.execute("select ip from pf_ip_ban;")
