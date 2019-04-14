@@ -37,7 +37,7 @@ def post_test():
     if request.json:
         resp = jsonify(request.get_json())
         return resp
-    return ("nope")
+    return "nope"
 
 
 @app.route("/ua")
