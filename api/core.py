@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from flask import Flask, jsonify, request, abort
+from flask import Flask, jsonify, request, make_response
 
 from .tools import require_appkey, require_auth, ip_get, ip_add
 # from tools import require_appkey, require_auth, ip_get, ip_add
@@ -66,7 +66,7 @@ def pf_post():
     if request.form:
         post_data = request.form.to_dict()
         if "IP" not in post_data.keys() or "source" not in post_data.keys():
-            abort(400)
+            return make_response(jsonify({'error': 'Bad Request'}), 400)
         (message, status_code) = ip_add(post_data["IP"], post_data["source"])
     if request.json:
         data = request.get_json()
@@ -76,7 +76,7 @@ def pf_post():
                 IP = entry["IP"]
                 source = entry["source"]
             except KeyError:
-                abort(400)
+                return make_response(jsonify({'error': 'Bad Request'}), 400)
             (message, status_code) = ip_add(IP, source)
             if status_code == 400:
                 return (jsonify(message), status_code)
