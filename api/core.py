@@ -54,7 +54,6 @@ def ban_pf_get():
     cursor.close()
     database.commit()
     database.close()
-    print(results)
     return jsonify(results)
 
 
