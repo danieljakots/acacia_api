@@ -64,6 +64,8 @@ def ban_pf_post():
     if "IP" not in post_data.keys() or "source" not in post_data.keys():
         abort(400)
     time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    if "/" not in post_data["IP"]:
+        post_data["IP"] = post_data["IP"] + "/32"
     values = (post_data["IP"], time, post_data["source"])
     database = db_connect()
     cursor = database.cursor()
@@ -72,6 +74,8 @@ def ban_pf_post():
             "INSERT INTO pf_ip_ban (ip, updated_at, source) VALUES (%s, %s, %s);",
             values,
         )
+    except psycopg2.DataError as e:
+        return(jsonify(str(e)), 400)
     except psycopg2.IntegrityError:
         return (jsonify("IP was already there"), 200)
     cursor.close()
