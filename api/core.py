@@ -40,8 +40,10 @@ def headers():
     return jsonify(headers)
 
 
-# CREATE TABLE pf_ip_ban (id SERIAL PRIMARY KEY, ip INET, updated_at timestamp without time zone, source character varying);
-# INSERT INTO pf_ip_ban (ip, updated_at, source) VALUES ('209.229.0.0/16', '2019-04-07 11:11:25-07', 'emerging');
+# CREATE TABLE pf_ip_ban (id SERIAL PRIMARY KEY, ip INET, updated_at timestamp
+# without time zone, source character varying);
+# INSERT INTO pf_ip_ban (ip, updated_at, source) VALUES ('209.229.0.0/16',
+# '2019-04-07 11:11:25-07', 'emerging');
 @app.route("/v1/ban-pf", methods=("GET",))
 @require_appkey
 def ban_pf():
