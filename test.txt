@@ -1,3 +1,5 @@
 curl -H https://api.chown.me/ip
-curl -H 'key: blih' https://api.chown.me/ban-pf
+curl -H 'key: blih' https://api.chown.me/v1/ban-pf
 curl -u qwe:qwe -i -X POST https://api.chown.me/post -d "dede=qwewqe" -d "coin=canard" -d "cdscodskmodsmco=dsfndsods"
+curl -u qwe:qwe -i -X POST https://api.chown.me/post -d "source=emerging" -d "IP=222.187.225.107"
+curl -H 'key: blih' -i -X POST https://api.chown.me/v1/ban-pf -d "source=emerging" -d "IP=222.187.225.107"
