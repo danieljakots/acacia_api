@@ -72,7 +72,12 @@ def pf_post():
         data = request.get_json()
         any_204 = 0
         for entry in data:
-            (message, status_code) = ip_add(entry["IP"], entry["source"])
+            try:
+                IP = entry["IP"]
+                source = entry["source"]
+            except KeyError:
+                abort(400)
+            (message, status_code) = ip_add(IP, source)
             if status_code == 400:
                 return (jsonify(message), status_code)
             elif status_code == 204:
