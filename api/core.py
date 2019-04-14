@@ -53,16 +53,16 @@ def headers():
     return jsonify(headers)
 
 
-@app.route("/v1/ban-pf", methods=("GET",))
+@app.route("/v1/pf", methods=("GET",))
 @require_appkey
-def ban_pf_get():
+def pf_get():
     results = ip_get()
     return jsonify(results)
 
 
-@app.route("/v1/ban-pf", methods=("POST",))
+@app.route("/v1/pf", methods=("POST",))
 @require_appkey
-def ban_pf_post():
+def pf_post():
     post_data = request.form.to_dict()
     if "IP" not in post_data.keys() or "source" not in post_data.keys():
         abort(400)
