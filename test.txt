@@ -4,4 +4,4 @@ curl -u qwe:qwe -i -X POST https://api.chown.me/post -d "dede=qwewqe" -d "coin=c
 curl -u qwe:qwe -i -X POST https://api.chown.me/post -d "source=emerging" -d "IP=222.187.225.107"
 curl -H 'key: blih' -i -X POST https://api.chown.me/v1/pf -d "source=emerging" -d "IP=222.187.225.107"
 
-curl -u qwe:qwe -i -X POST https://api.chown.me/post-test -H "Content-Type: application/json" -d '[{"IP": "1.1.1.1", "source": "emerging"}, , {"IP": "2.2.2.2", "source": "emerging"}, {"IP": "3.3.3.3", "source": "emerging"}]'
+curl -u qwe:qwe -i -X POST https://api.chown.me/post-test -H "Content-Type: application/json" -d '[{"IP": "1.1.1.1", "source": "emerging"}, {"IP": "2.2.2.2", "source": "emerging"}, {"IP": "3.3.3.3", "source": "emerging"}]'
