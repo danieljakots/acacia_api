@@ -76,8 +76,8 @@ def ban_pf_post():
         )
     except psycopg2.DataError as e:
         return(jsonify(str(e)), 400)
-    except psycopg2.IntegrityError:
-        return (jsonify("IP was already there"), 200)
+    except psycopg2.IntegrityError as e:
+        return(jsonify(str(e)), 200)
     cursor.close()
     database.commit()
     database.close()
