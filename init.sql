@@ -5,6 +5,7 @@
 DROP TABLE IF EXISTS pf_ip_ban;
 CREATE TABLE pf_ip_ban (id SERIAL PRIMARY KEY, ip CIDR UNIQUE, updated_at timestamp without time zone, source character varying);
 INSERT INTO pf_ip_ban (ip, updated_at, source) VALUES ('209.229.0.0/16', '2019-04-07 11:11:25-07', 'emerging');
+INSERT INTO pf_ip_ban (ip, updated_at, source) VALUES ('219.229.0.2', '2019-04-14 11:11:25-07', 'emerging');
 
 ALTER TABLE pf_ip_ban OWNER TO api;
 
