@@ -71,7 +71,6 @@ def pf_post():
             [{"IP": post_data["IP"], "source": post_data["source"]}]
         )
     elif request.json:
-        request.get_json()
         (message, status_code) = ip_add(request.get_json())
     else:
         return make_response(jsonify({"error": "Bad Request"}), 400)
