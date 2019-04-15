@@ -67,24 +67,12 @@ def pf_post():
         post_data = request.form.to_dict()
         if "IP" not in post_data.keys() or "source" not in post_data.keys():
             return make_response(jsonify({"error": "Bad Request"}), 400)
-        (message, status_code) = ip_add(post_data["IP"], post_data["source"])
-    if request.json:
-        data = request.get_json()
-        any_204 = 0
-        for entry in data:
-            try:
-                IP = entry["IP"]
-                source = entry["source"]
-            except KeyError:
-                return make_response(jsonify({"error": "Bad Request"}), 400)
-            (message, status_code) = ip_add(IP, source)
-            if status_code == 400:
-                return (jsonify(message), status_code)
-            elif status_code == 204:
-                any_204 = 1
-        # As long we had at least one 204, that's what we will return
-        if any_204 == 1:
-            status_code = 204
+        message, status_code = ip_add(
+            [{"IP": post_data["IP"], "source": post_data["source"]}]
+        )
+    elif request.json:
+        request.get_json()
+        (message, status_code) = ip_add(request.get_json())
     return (jsonify(message), status_code)
 
 

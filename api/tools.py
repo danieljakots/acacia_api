@@ -81,29 +81,46 @@ def ip_get():
     return results
 
 
-def ip_add(IP, source):
+def ip_add(data):
     time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    if "/" not in IP:
-        IP = IP + "/32"
-    values = (IP, time, source)
-
     database = db_connect()
     cursor = database.cursor()
-    try:
-        cursor.execute(
-            "INSERT INTO pf_ip_ban (ip, updated_at, source) VALUES (%s, %s, %s);",
-            values,
-        )
-    # Most likely a problem with the CIDR
-    except psycopg2.DataError as e:
-        return (str(e), 400)
-    # Unicity clause
-    except psycopg2.IntegrityError as e:
-        return (str(e), 200)
-    cursor.close()
+
+    any_204 = 0
+    for entry in data:
+        try:
+            IP = entry["IP"]
+            source = entry["source"]
+        except KeyError as e:
+            return (str(e), 400)
+        if "/" not in IP:
+            IP = IP + "/32"
+        values = (IP, time, source)
+        try:
+            cursor.execute(
+                "INSERT INTO pf_ip_ban (ip, updated_at, source) VALUES (%s, %s, %s);",
+                values,
+            )
+        # Most likely a problem with the CIDR
+        except psycopg2.DataError as e:
+            database.rollback()
+            return (str(e), 400)
+        # Unicity clause
+        except psycopg2.IntegrityError as e:
+            message = str(e)
+            status_code = 200
+            database.rollback()
+        else:
+            any_204 = 1
     database.commit()
+    cursor.close()
     database.close()
-    return ("", 204)
+    if any_204:
+        return ("", 204)
+    elif status_code == 200:
+        return (message, status_code)
+    else:
+        return ("How did you get there?", 400)
 
 
 def ip_delete(IP):
