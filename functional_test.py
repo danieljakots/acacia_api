@@ -64,23 +64,16 @@ def test_delete():
 
 
 def main():
-    print("BEGIN TEST_INIT")
     test_init()
-    print("BEGIN TEST_GET")
     shouldbe_data = '[["209.229.0.0/16"], ["219.229.0.2/32"]]'
     test_get(shouldbe_data)
-    print("BEGIN TEST_NO_POST")
     test_no_post()
-    print("BEGIN TEST_POST")
     test_post()
-    print("BEGIN TEST_GET AGAIN")
     shouldbe_data = (
-        '[["209.229.0.0/16"], ["219.229.0.2/32"], ["1.1.1.1/32"], ["2.2.2.2/32"]]'
+        '[["209.229.0.0/16"], ["219.229.0.2/32"], ["1.1.1.1/32"], ["2.2.2.2/32"], ["3.3.3.3/32"]]'
     )
     test_get(shouldbe_data)
-    print("BEGIN TEST_DELETE")
     test_delete()
-    print("BEGIN TEST_GET LAST")
     shouldbe_data = '[["209.229.0.0/16"], ["219.229.0.2/32"]]'
     test_get(shouldbe_data)
 
