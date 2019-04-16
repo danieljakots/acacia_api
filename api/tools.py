@@ -104,6 +104,7 @@ def ip_add(data):
     database = db_connect()
     cursor = database.cursor()
 
+    any_200 = 0
     any_204 = 0
     for entry in data:
         try:
@@ -126,17 +127,18 @@ def ip_add(data):
         # Unicity clause
         except psycopg2.IntegrityError as e:
             message = str(e)
-            status_code = 200
+            any_200 = 1
             database.rollback()
         else:
             any_204 = 1
+            database.commit()
     database.commit()
     cursor.close()
     database.close()
     if any_204:
         return ("", 204)
-    elif status_code == 200:
-        return (message, status_code)
+    elif any_200:
+        return (message, 200)
     else:
         return ("How did you get there?", 400)
 
