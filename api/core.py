@@ -2,8 +2,8 @@
 
 from flask import Flask, jsonify, request, make_response
 
-from .tools import require_appkey, require_auth, ip_get, ip_add, ip_delete
-# from tools import require_appkey, require_auth, ip_get, ip_add, ip_delete
+from .tools import require_appkey, require_auth, ip_get, ip_add, ip_delete, ip_init
+# from tools import require_appkey, require_auth, ip_get, ip_add, ip_delete, ip_init
 
 
 app = Flask(__name__)
@@ -51,6 +51,13 @@ def ua():
 def headers():
     headers = dict(request.headers.items())
     return jsonify(headers)
+
+
+@app.route("/v1/pf-init", methods=("GET",))
+@require_appkey
+def pf_init():
+    ip_init()
+    return ("", 204)
 
 
 @app.route("/v1/pf", methods=("GET",))

@@ -70,6 +70,24 @@ def db_connect():
     return database
 
 
+def ip_init():
+    database = db_connect()
+    cursor = database.cursor()
+    cursor.execute("DROP TABLE IF EXISTS pf_ip_ban;")
+    cursor.execute(
+        "CREATE TABLE pf_ip_ban (id SERIAL PRIMARY KEY, ip CIDR UNIQUE, updated_at timestamp without time zone, source character varying);"
+    )
+    cursor.execute(
+        "INSERT INTO pf_ip_ban (ip, updated_at, source) VALUES ('209.229.0.0/16', '2019-04-07 11:11:25-07', 'emerging');"
+    )
+    cursor.execute(
+        "INSERT INTO pf_ip_ban (ip, updated_at, source) VALUES ('219.229.0.2', '2019-04-14 11:11:25-07', 'emerging');"
+    )
+    cursor.close()
+    database.commit()
+    database.close()
+
+
 def ip_get():
     database = db_connect()
     cursor = database.cursor()

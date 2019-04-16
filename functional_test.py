@@ -8,6 +8,14 @@ import requests
 API = "https://api.chown.me"
 
 
+def test_init():
+    headers = {"key": "blih", "User-Agent": "meh"}
+    get = requests.get(f"{API}/v1/pf-init", headers=headers)
+    if get.status_code != 204:
+        print("INIT bad status code")
+        sys.exit(1)
+
+
 def test_get(shouldbe_data):
     headers = {"key": "blih", "User-Agent": "meh"}
     get = requests.get(f"{API}/v1/pf", headers=headers)
@@ -56,6 +64,8 @@ def test_delete():
 
 
 def main():
+    print("BEGIN TEST_INIT")
+    test_init()
     print("BEGIN TEST_GET")
     shouldbe_data = '[["209.229.0.0/16"], ["219.229.0.2/32"]]'
     test_get(shouldbe_data)
