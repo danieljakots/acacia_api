@@ -56,6 +56,7 @@ def main():
     shouldbe_data = '[["209.229.0.0/16"], ["219.229.0.2/32"]]'
     get(shouldbe_data)
 
+    # missing source IP
     data = '[{"IP": "1.1.1.1"}, {"IP": "2.2.2.2"}]'
     rcode = 400
     msg = "BAD DATA"
@@ -63,6 +64,7 @@ def main():
     shouldbe_data = '[["209.229.0.0/16"], ["219.229.0.2/32"]]'
     get(shouldbe_data)
 
+    # good stuff
     data = '[{"IP": "1.1.1.1", "source": "test"}, {"IP": "2.2.2.2", "source": "test"}]'
     rcode = 204
     msg = "GOOD DATA"
@@ -72,6 +74,7 @@ def main():
     )
     get(shouldbe_data)
 
+    # good stuff again
     data = '[{"IP": "1.1.1.1", "source": "test"}, {"IP": "2.2.2.2", "source": "test"}]'
     rcode = 200
     msg = "GOOD DATA AGAIN"
@@ -81,6 +84,7 @@ def main():
     )
     get(shouldbe_data)
 
+    # both good and already given
     data = '[{"IP": "3.3.3.3", "source": "test"}, {"IP": "2.2.2.2", "source": "test"}]'
     rcode = 204
     msg = "GOOD DATA + ALREADY GIVEN DATA"
@@ -88,6 +92,7 @@ def main():
     shouldbe_data = '[["209.229.0.0/16"], ["219.229.0.2/32"], ["1.1.1.1/32"], ["2.2.2.2/32"], ["3.3.3.3/32"]]'
     get(shouldbe_data)
 
+    # both good and already given but reverse order
     data = '[{"IP": "2.2.2.2", "source": "test"}, {"IP": "4.4.4.4", "source": "test"}]'
     rcode = 204
     msg = "ALREADY GIVEN DATA + GOOD DATA"
@@ -95,6 +100,7 @@ def main():
     shouldbe_data = '[["209.229.0.0/16"], ["219.229.0.2/32"], ["1.1.1.1/32"], ["2.2.2.2/32"], ["3.3.3.3/32"], ["4.4.4.4/32"]]'
     get(shouldbe_data)
 
+    # only already given
     data = '[{"IP": "3.3.3.3", "source": "test"}, {"IP": "2.2.2.2", "source": "test"}]'
     rcode = 200
     msg = "ALREADY GIVEN DATA"
