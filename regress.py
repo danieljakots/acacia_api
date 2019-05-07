@@ -42,13 +42,12 @@ def post(data, rcode, msg):
     print(f"{msg} OK", end='... ')
 
 
-def delete():
-    data = '[{"IP": "1.1.1.1"}, {"IP": "2.2.2.2"}]'
+def delete(data, rcode, msg):
     post = requests.delete(f"{API}/v1/pf", headers=HEADERS, data=data)
-    if post.status_code != 204:
-        print("DELETE bad status code")
+    if post.status_code != rcode:
+        print(f"{msg} bad status code")
         sys.exit(1)
-    print("DELETE OK")
+    print(f"{msg} OK", end='... ')
 
 
 def main():
@@ -106,6 +105,14 @@ def main():
     msg = "ALREADY GIVEN DATA"
     post(data, rcode, msg)
     shouldbe_data = '[["209.229.0.0/16"], ["219.229.0.2/32"], ["1.1.1.1/32"], ["2.2.2.2/32"], ["3.3.3.3/32"], ["4.4.4.4/32"]]'
+    get(shouldbe_data)
+
+    # delete
+    data = '[{"IP": "3.3.3.3"}, {"IP": "2.2.2.2"}]'
+    rcode = 204
+    msg = "DELETE DATA"
+    delete(data, rcode, msg)
+    shouldbe_data = '[["209.229.0.0/16"], ["219.229.0.2/32"], ["1.1.1.1/32"], ["4.4.4.4/32"]]'
     get(shouldbe_data)
 
 
