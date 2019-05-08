@@ -88,10 +88,13 @@ def ip_init():
     database.close()
 
 
-def ip_get():
+def ip_get(order=None):
     database = db_connect()
     cursor = database.cursor()
-    cursor.execute("select ip from pf_ip_ban;")
+    if order == "ip":
+        cursor.execute("select ip from pf_ip_ban order by ip;")
+    else:
+        cursor.execute("select ip from pf_ip_ban;")
     results = cursor.fetchall()
     cursor.close()
     database.commit()

@@ -16,9 +16,13 @@ def init():
         sys.exit(1)
 
 
-def get(shouldbe_data):
-    get = requests.get(f"{API}/v1/pf", headers=HEADERS)
-    if get.status_code != 200:
+def get(shouldbe_data, order=None, rcode=200):
+    if order:
+        params = {"order": order}
+    else:
+        params = {}
+    get = requests.get(f"{API}/v1/pf", headers=HEADERS, params=params)
+    if get.status_code != rcode:
         print("GET bad status code")
         sys.exit(1)
     shouldbe_json = json.loads(shouldbe_data)
@@ -114,6 +118,16 @@ def main():
     delete(data, rcode, msg)
     shouldbe_data = '[["209.229.0.0/16"], ["219.229.0.2/32"], ["1.1.1.1/32"], ["4.4.4.4/32"]]'
     get(shouldbe_data)
+
+    # get bad order
+    print("GET BAD ORDERED DATA", end="... ")
+    shouldbe_data = '{"error": "Bad Request"}'
+    get(shouldbe_data, order="lol-IP", rcode=400)
+
+    # get good order
+    print("GET GOOD ORDERED DATA", end="... ")
+    shouldbe_data = '[["1.1.1.1/32"], ["4.4.4.4/32"], ["209.229.0.0/16"], ["219.229.0.2/32"]]'
+    get(shouldbe_data, order="IP")
 
 
 if __name__ == "__main__":
