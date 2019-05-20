@@ -8,6 +8,7 @@ import sys
 import requests
 
 API = "https://api.chown.me"
+IDENT = ("test", "8d604831")
 
 
 def now_to_strftime():
@@ -42,10 +43,10 @@ def parse_emerging(emerging):
 
 
 def feed_api(IP):
-    headers = {"key": "blih", "Content-Type": "application/json"}
+    headers = {"Content-Type": "application/json"}
     # yes it's needed
     data = str(IP).replace("'", '"')
-    post = requests.post(f"{API}/v1/pf", headers=headers, data=data)
+    post = requests.post(f"{API}/v1/pf", headers=headers, data=data, auth=IDENT)
     print(post.text)
     print(post.status_code)
     if post.status_code != 204:
