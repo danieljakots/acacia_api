@@ -6,11 +6,12 @@ import sys
 import requests
 
 API = "https://api.chown.me"
-HEADERS = {"key": "blih", "User-Agent": "meh", "Content-Type": "application/json"}
+HEADERS = {"Content-Type": "application/json"}
+IDENT = ("test", "8d604831")
 
 
 def init():
-    get = requests.get(f"{API}/v1/pf-init", headers=HEADERS)
+    get = requests.get(f"{API}/v1/pf-init", headers=HEADERS, auth=IDENT)
     rcode = 204
     if get.status_code != rcode:
         print("INIT bad status code")
@@ -24,7 +25,7 @@ def get(shouldbe_data, order=None, rcode=200):
         params = {"order": order}
     else:
         params = {}
-    get = requests.get(f"{API}/v1/pf", headers=HEADERS, params=params)
+    get = requests.get(f"{API}/v1/pf", headers=HEADERS, params=params, auth=IDENT)
     if get.status_code != rcode:
         print("GET bad status code")
         print(f"got {get.status_code}, should have been {rcode}")
@@ -42,7 +43,7 @@ def get(shouldbe_data, order=None, rcode=200):
 
 
 def post(data, rcode, msg):
-    post = requests.post(f"{API}/v1/pf", headers=HEADERS, data=data)
+    post = requests.post(f"{API}/v1/pf", headers=HEADERS, data=data, auth=IDENT)
     if post.status_code != rcode:
         print(f"{msg} bad status code")
         print(post.text)
@@ -52,7 +53,7 @@ def post(data, rcode, msg):
 
 
 def delete(data, rcode, msg):
-    post = requests.delete(f"{API}/v1/pf", headers=HEADERS, data=data)
+    post = requests.delete(f"{API}/v1/pf", headers=HEADERS, data=data, auth=IDENT)
     if post.status_code != rcode:
         print(f"{msg} bad status code")
         sys.exit(1)

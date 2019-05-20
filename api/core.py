@@ -54,14 +54,14 @@ def headers():
 
 
 @app.route("/v1/pf-init", methods=("GET",))
-@require_appkey
+@require_auth
 def pf_init():
     ip_init()
     return ("", 204)
 
 
 @app.route("/v1/pf", methods=("GET",))
-@require_appkey
+@require_auth
 def pf_get():
     order = request.args.get('order')
     if order and order.lower() != "ip":
@@ -73,7 +73,7 @@ def pf_get():
 
 
 @app.route("/v1/pf", methods=("POST",))
-@require_appkey
+@require_auth
 def pf_post():
     if request.form:
         post_data = request.form.to_dict()
@@ -90,7 +90,7 @@ def pf_post():
 
 
 @app.route("/v1/pf", methods=("DELETE",))
-@require_appkey
+@require_auth
 def pf_delete():
     if request.json:
         data = request.get_json()

@@ -28,23 +28,23 @@ def require_appkey(view_function):
     return decorated_function
 
 
+# INSERT INTO USERS (api_user, password, active) VALUES ('.chown.me', 'uuid', 1);
 def check_auth(username, password):
     """This function is called to check if a username /
     password combination is valid.
     """
-    print(username, password)
-    return username == "qwe" and password == "qwe"
-#     conn = sqlite3.connect('/home/api/api.db')
-#     c = conn.cursor()
-#     c.execute("SELECT password, active FROM users WHERE user=?",
-#               (username,))
-#     data = c.fetchone()
-#     if data is None:
-#         return False
-#     db_password, active = data
-#     if active == 0:
-#         return False
-#     return db_password == password
+    # return username == "qwe" and password == "qwe"
+    database = db_connect()
+    cursor = database.cursor()
+    cursor.execute("select password, active from users where api_user=%s;", (username,))
+    results = cursor.fetchone()
+    if results[0] != password or results[1] != 1:
+        cursor.close()
+        database.close()
+        return False
+    cursor.close()
+    database.close()
+    return True
 
 
 def require_auth(f):
