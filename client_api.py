@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 import datetime
+import socket
+import subprocess
 import sys
 
 import requests
@@ -11,6 +13,17 @@ API = "https://api.chown.me"
 def now_to_strftime():
     now = datetime.datetime.now()
     return now.strftime("%Y/%m/%d %H:%M:%S")
+
+
+def get_pf(table):
+    hostname = socket.gethostname()
+    timestamp = now_to_strftime()
+    command = subprocess.run(
+        ["doas", "pfctl", "-t", table, "-Ts"], stdout=subprocess.PIPE, encoding="utf-8"
+    )
+    IP = []
+    for line in command.stdout.split():
+        IP.append({"IP": line, "source": f"{timestamp} - {hostname}/{table}"})
 
 
 def get_emerging_threats():
@@ -24,7 +37,7 @@ def parse_emerging(emerging):
     for line in emerging.split("\n"):
         if not line or line[0] == "#":
             continue
-        IP.append({"IP": line, "source": f"emerging - {timestamp}"})
+        IP.append({"IP": line, "source": f"{timestamp} - emerging"})
     return IP
 
 
@@ -45,6 +58,11 @@ def main():
     emerging = get_emerging_threats()
     IP = parse_emerging(emerging)
     feed_api(IP)
+
+    pf_tables = []
+    for table in pf_tables:
+        IP = get_pf(table)
+        feed_api(IP)
 
 
 if __name__ == "__main__":
