@@ -128,6 +128,7 @@ def main():
     print("GET GOOD ORDERED DATA", end="... ")
     shouldbe_data = '[["1.1.1.1/32"], ["4.4.4.4/32"], ["209.229.0.0/16"], ["219.229.0.2/32"]]'
     get(shouldbe_data, order="IP")
+    print("FINISHED")
 
 
 if __name__ == "__main__":
