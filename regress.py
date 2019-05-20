@@ -11,8 +11,11 @@ HEADERS = {"key": "blih", "User-Agent": "meh", "Content-Type": "application/json
 
 def init():
     get = requests.get(f"{API}/v1/pf-init", headers=HEADERS)
-    if get.status_code != 204:
+    rcode = 204
+    if get.status_code != rcode:
         print("INIT bad status code")
+        print(f"got {get.status_code}, should have been {rcode}")
+        print(get.text)
         sys.exit(1)
 
 
@@ -24,6 +27,8 @@ def get(shouldbe_data, order=None, rcode=200):
     get = requests.get(f"{API}/v1/pf", headers=HEADERS, params=params)
     if get.status_code != rcode:
         print("GET bad status code")
+        print(f"got {get.status_code}, should have been {rcode}")
+        print(get.text)
         sys.exit(1)
     shouldbe_json = json.loads(shouldbe_data)
     if get.json() != shouldbe_json:
