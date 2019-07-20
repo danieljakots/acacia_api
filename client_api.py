@@ -16,7 +16,16 @@ def now_to_strftime():
     return now.strftime("%Y/%m/%d %H:%M:%S")
 
 
-def get_pf(table):
+def get_pf_table_list():
+    command = subprocess.run(
+        ["doas", "pfctl", "-ST"], stdout=subprocess.PIPE, encoding="utf-8"
+    )
+    for line in command.stdout.split():
+        if line[:5] == "brute":
+            yield line
+
+
+def get_pf_table_content(table):
     hostname = socket.gethostname()
     timestamp = now_to_strftime()
     command = subprocess.run(
@@ -47,12 +56,28 @@ def feed_api(IP):
     # yes it's needed
     data = str(IP).replace("'", '"')
     post = requests.post(f"{API}/v1/pf", headers=headers, data=data, auth=IDENT)
-    print(post.text)
-    print(post.status_code)
     if post.status_code != 204:
-        print("POST bad status code")
+        print(f"POST bad status code: {post.status_code}")
         sys.exit(1)
-    print("POST OK")
+
+
+def get_api_bans(IP):
+    get = requests.post(f"{API}/v1/pf", auth=IDENT)
+    if get.status_code != 200:
+        print(f"GET bad status code: {get.status_code}")
+        sys.exit(1)
+    # json will be [['209.229.0.0/16'], ['219.229.0.2/32']]
+    for field in get.json():
+        yield(field[0])
+
+
+
+def feed_pf_table(address):
+    subprocess.run(
+        ["doas", "pfctl", "-t", "api_bans", "-Ta", address],
+        stdout=subprocess.PIPE,
+        encoding="utf-8",
+    )
 
 
 def main():
@@ -60,9 +85,8 @@ def main():
     IP = parse_emerging(emerging)
     feed_api(IP)
 
-    pf_tables = []
-    for table in pf_tables:
-        IP = get_pf(table)
+    for table in get_pf_table_list():
+        IP = get_pf_table_content(table)
         feed_api(IP)
 
 
