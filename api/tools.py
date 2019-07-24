@@ -157,3 +157,14 @@ def ip_delete(IP):
     database.commit()
     database.close()
     return ("", 204)
+
+
+def ip_count():
+    database = db_connect()
+    cursor = database.cursor()
+    cursor.execute("select count(ip) from pf_ip_ban;")
+    results = cursor.fetchone()[0]
+    cursor.close()
+    database.commit()
+    database.close()
+    return results

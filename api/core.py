@@ -2,8 +2,25 @@
 
 from flask import Flask, jsonify, request, make_response
 
-from .tools import require_appkey, require_auth, ip_get, ip_add, ip_delete, ip_init
-# from tools import require_appkey, require_auth, ip_get, ip_add, ip_delete, ip_init
+from .tools import (
+    require_appkey,
+    require_auth,
+    ip_get,
+    ip_add,
+    ip_delete,
+    ip_init,
+    ip_count,
+)
+
+# from tools import (
+#     require_appkey,
+#     require_auth,
+#     ip_get,
+#     ip_add,
+#     ip_delete,
+#     ip_init,
+#     ip_count,
+# )
 
 
 app = Flask(__name__)
@@ -101,6 +118,15 @@ def pf_delete():
                 return make_response(jsonify({"error": "Bad Request"}), 400)
             ip_delete(IP)
     return ("", 204)
+
+
+@app.route("/v1/healthcheck", methods=("GET",))
+def healthcheck():
+    results = ip_count()
+    print(results)
+    if results < 10:
+        return make_response(jsonify({"error": "Too few results, check health"}), 400)
+    return jsonify(results)
 
 
 if __name__ == "__main__":
