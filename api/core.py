@@ -63,7 +63,7 @@ def pf_init():
 @app.route("/v1/pf", methods=("GET",))
 @require_auth
 def pf_get():
-    order = request.args.get('order')
+    order = request.args.get("order")
     if order and order.lower() != "ip":
         return make_response(jsonify({"error": "Bad Request"}), 400)
     if order and order.lower() == "ip":
