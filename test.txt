@@ -10,3 +10,5 @@ curl -H 'key: blih' -i -X POST https://api.chown.me/v1/pf -d "source=emerging" -
 curl -H 'key: blih' -i -X POST https://api.chown.me/v1/pf -H "Content-Type: application/json" -d '[{"IP": "1.1.1.1", "source": "emerging"}, {"IP": "2.2.2.2", "source": "emerging"}, {"IP": "3.3.3.3", "source": "emerging"}]'
 curl -H 'key: blih' -i -X DELETE https://api.chown.me/v1/pf -H "Content-Type: application/json" -d '[{"IP": "1.1.1.1"}, {"IP": "2.2.2.2"}]'
 
+curl -i -X POST -u 'test:8d604831' https://api.chown.me/v1/pf -d "IP=1.1.1.1" -d "source=test"
+curl -i -X DELETE -u 'test:8d604831' https://api.chown.me/v1/pf -d "IP=1.1.1.1"
