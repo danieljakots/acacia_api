@@ -53,8 +53,8 @@ def post(data, rcode, msg):
 
 
 def delete(data, rcode, msg):
-    post = requests.delete(f"{API}/v1/pf", headers=HEADERS, data=data, auth=IDENT)
-    if post.status_code != rcode:
+    delete  = requests.delete(f"{API}/v1/pf", headers=HEADERS, data=data, auth=IDENT)
+    if delete.status_code != rcode:
         print(f"{msg} bad status code")
         sys.exit(1)
     print(f"{msg} OK", end='... ')
