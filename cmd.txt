@@ -1,0 +1,2 @@
+docker run -it -e PG_HOST=127.0.0.1 -e PG_PASSWORD=hunter2 -e PG_USER=api -e PG_DB=api --mount type=tmpfs,destination=/tmpfs,tmpfs-mode=777,tmpfs-size=32M api:v6
+podman run -it -e PG_HOST=127.0.0.1 -e PG_PASSWORD=hunter2 -e PG_USER=api -e PG_DB=api --mount type=tmpfs,destination=/tmpfs,tmpfs-mode=777,tmpfs-size=32M api:v6
