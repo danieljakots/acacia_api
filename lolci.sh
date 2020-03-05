@@ -22,7 +22,7 @@ docker run -d --rm --name "$_PG_CONTAINER" --net "$_DOCKER_NET" -p 5432:5432 \
 	-e POSTGRES_USER=api -e POSTGRES_PASSWORD=$PGPASSWORD \
 	postgres -c 'shared_buffers=512MB'
 
-sleep 5
+sleep 3
 
 echo "initializing postgres"
 docker exec -it -e PGPASSWORD=$PGPASSWORD "$_PG_CONTAINER" psql -d api -U api -c \
@@ -32,7 +32,7 @@ docker exec -it -e PGPASSWORD=$PGPASSWORD "$_PG_CONTAINER" psql -d api -U api -c
 docker exec -it -e PGPASSWORD=$PGPASSWORD "$_PG_CONTAINER" psql -d api -U api -c \
 	"INSERT INTO users VALUES ('test', '8d604831', 1);"
 
-sleep 3
+sleep 1
 
 echo "creating api"
 docker run -d --rm -p 8123:8123 --name api --net "$_DOCKER_NET" \
