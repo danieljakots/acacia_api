@@ -124,7 +124,7 @@ def v1_pf_delete():
 def v1_healthcheck():
     results = ip_count()
     if results < 3:
-        return make_response(jsonify({"error": "Too few results, check health"}), 400)
+        return make_response(jsonify({"error": "Too few results, check health"}), 500)
     return jsonify(results)
 
 
