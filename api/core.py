@@ -72,14 +72,14 @@ def headers():
 
 @app.route("/v1/pf-init", methods=("GET",))
 @require_auth
-def pf_init():
+def v1_pf_init():
     ip_init()
     return ("", 204)
 
 
 @app.route("/v1/pf", methods=("GET",))
 @require_auth
-def pf_get():
+def v1_pf_get():
     order = request.args.get("order")
     if order and order.lower() != "ip":
         return make_response(jsonify({"error": "Bad Request"}), 400)
@@ -91,7 +91,7 @@ def pf_get():
 
 @app.route("/v1/pf", methods=("POST",))
 @require_auth
-def pf_post():
+def v1_pf_post():
     if request.form:
         post_data = request.form.to_dict()
         if "IP" not in post_data.keys() or "source" not in post_data.keys():
@@ -108,7 +108,7 @@ def pf_post():
 
 @app.route("/v1/pf", methods=("DELETE",))
 @require_auth
-def pf_delete():
+def v1_pf_delete():
     if request.json:
         data = request.get_json()
         for entry in data:
@@ -121,7 +121,7 @@ def pf_delete():
 
 
 @app.route("/v1/healthcheck", methods=("GET",))
-def healthcheck():
+def v1_healthcheck():
     results = ip_count()
     if results < 10:
         return make_response(jsonify({"error": "Too few results, check health"}), 400)
@@ -130,7 +130,7 @@ def healthcheck():
 
 @app.route("/v2/pf", methods=("GET",))
 @require_auth
-def pf_get2():
+def v2_pf_get():
     order = request.args.get("order")
     if order and order.lower() != "ip":
         return make_response(jsonify({"error": "Bad Request"}), 400)
