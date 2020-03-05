@@ -5,7 +5,7 @@ import sys
 
 import requests
 
-#API = "https://api.chown.me"
+# API = "https://api.chown.me"
 API = "http://localhost:8123"
 HEADERS = {"Content-Type": "application/json"}
 IDENT = ("test", "8d604831")
@@ -54,7 +54,7 @@ def post(data, rcode, msg):
 
 
 def delete(data, rcode, msg):
-    delete  = requests.delete(f"{API}/v1/pf", headers=HEADERS, data=data, auth=IDENT)
+    delete = requests.delete(f"{API}/v1/pf", headers=HEADERS, data=data, auth=IDENT)
     if delete.status_code != rcode:
         print(f"{msg} bad status code")
         sys.exit(1)
