@@ -128,6 +128,20 @@ def healthcheck():
     return jsonify(results)
 
 
+@app.route("/v2/pf", methods=("GET",))
+@require_auth
+def pf_get2():
+    order = request.args.get("order")
+    if order and order.lower() != "ip":
+        return make_response(jsonify({"error": "Bad Request"}), 400)
+    if order and order.lower() == "ip":
+        order = "ip"
+    results = ip_get(order=order)
+    IP_count = len(results)
+    results = {"count": IP_count, "IP": results}
+    return jsonify(results)
+
+
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=8080, debug=True)
     # app.run(host='127.0.0.1', port=8080, debug=False)
