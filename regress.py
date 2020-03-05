@@ -19,6 +19,7 @@ def init():
         print(f"got {get.status_code}, should have been {rcode}")
         print(get.text)
         sys.exit(1)
+    print("INIT OK")
 
 
 def get(shouldbe_data, order=None, rcode=200, version=1):
@@ -63,6 +64,7 @@ def delete(data, rcode, msg):
 
 def main():
     init()
+
     shouldbe_data = '[["209.229.0.0/16"], ["219.229.0.2/32"]]'
     get(shouldbe_data)
 
