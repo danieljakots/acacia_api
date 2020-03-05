@@ -1,4 +1,4 @@
-FROM alpine:3.10
+FROM alpine:3.11
 
 RUN apk --no-cache add py3-flask py3-psycopg2 py3-gunicorn
 
