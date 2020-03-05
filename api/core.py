@@ -123,7 +123,6 @@ def pf_delete():
 @app.route("/v1/healthcheck", methods=("GET",))
 def healthcheck():
     results = ip_count()
-    print(results)
     if results < 10:
         return make_response(jsonify({"error": "Too few results, check health"}), 400)
     return jsonify(results)
