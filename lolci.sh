@@ -4,7 +4,7 @@ export PGPASSWORD=hunter2
 
 _DOCKER_NET=mynet
 _PG_CONTAINER=pgdocker
-_API_VERSION=13
+_API_VERSION=14
 _PG_VERSION=12.2
 
 [ $(docker ps -a | grep -c "$_PG_CONTAINER") -gt 0 ] && echo "cleaning pgsql" && \
