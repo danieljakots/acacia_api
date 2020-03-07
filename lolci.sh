@@ -5,6 +5,7 @@ export PGPASSWORD=hunter2
 _DOCKER_NET=mynet
 _PG_CONTAINER=pgdocker
 _API_VERSION=13
+_PG_VERSION=12.2
 
 [ $(docker ps -a | grep -c "$_PG_CONTAINER") -gt 0 ] && echo "cleaning pgsql" && \
 	docker rm --force "$_PG_CONTAINER" > /dev/null
@@ -20,7 +21,7 @@ docker network create "$_DOCKER_NET"
 echo "creating postgres"
 docker run -d --rm --name "$_PG_CONTAINER" --net "$_DOCKER_NET" -p 5432:5432 \
 	-e POSTGRES_USER=api -e POSTGRES_PASSWORD=$PGPASSWORD \
-	postgres -c 'shared_buffers=512MB'
+	postgres:"$_PG_VERSION" -c 'shared_buffers=512MB'
 
 sleep 3
 
