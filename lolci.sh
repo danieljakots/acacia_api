@@ -4,7 +4,7 @@ export PGPASSWORD=hunter2
 
 _DOCKER_NET=mynet
 _PG_CONTAINER=pgdocker
-_API_VERSION=14
+_API_VERSION=latest
 _PG_VERSION=12.2
 
 [ $(docker ps -a | grep -c "$_PG_CONTAINER") -gt 0 ] && echo "cleaning pgsql" && \
@@ -39,8 +39,8 @@ sleep 1
 
 echo "creating api"
 docker run -d --rm -p 8123:8123 --name api --net "$_DOCKER_NET" \
-	-e PG_HOST="$_PG_CONTAINER" -e PG_PASSWORD=$PGPASSWORD -e PG_USER=api -e PG_DB=api \
-	--mount type=tmpfs,destination=/tmpfs,tmpfs-mode=777,tmpfs-size=32M api:"v$_API_VERSION"
+	-e PG_HOST="$_PG_CONTAINER" -e PG_PASSWORD=$PGPASSWORD_API -e PG_USER=api -e PG_DB=api \
+	--mount type=tmpfs,destination=/tmpfs,tmpfs-mode=777,tmpfs-size=32M api:"$_API_VERSION"
 
 sleep 2
 
