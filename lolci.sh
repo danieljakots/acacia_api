@@ -1,6 +1,7 @@
 #!/bin/sh
 
-export PGPASSWORD=hunter2
+export PGPASSWORD_POSTGRES=hunter2
+export PGPASSWORD_API=hunter3
 
 _DOCKER_NET=mynet
 _PG_CONTAINER=pgdocker
@@ -22,17 +23,21 @@ echo "creating network"
 docker network create "$_DOCKER_NET"
 echo "creating postgres"
 docker run -d --rm --name "$_PG_CONTAINER" --net "$_DOCKER_NET" -p 5432:5432 \
-	-e POSTGRES_USER=api -e POSTGRES_PASSWORD=$PGPASSWORD \
+	-e POSTGRES_PASSWORD=$PGPASSWORD_POSTGRES \
 	postgres:"$_PG_VERSION" -c 'shared_buffers=512MB'
 
 sleep 3
 
 echo "initializing postgres"
-docker exec -it -e PGPASSWORD=$PGPASSWORD "$_PG_CONTAINER" psql -d api -U api -c \
+docker exec -it -e PGPASSWORD=$PGPASSWORD_POSTGRES "$_PG_CONTAINER" createuser -U postgres --no-password api
+docker exec -it -e PGPASSWORD=$PGPASSWORD_POSTGRES "$_PG_CONTAINER" psql -U postgres -c \
+	"ALTER USER api WITH PASSWORD '$PGPASSWORD_API';"
+docker exec -it -e PGPASSWORD=$PGPASSWORD_POSTGRES "$_PG_CONTAINER" createdb -U postgres -O api api
+docker exec -it -e PGPASSWORD=$PGPASSWORD_API "$_PG_CONTAINER" psql -d api -U api -c \
 	'CREATE TABLE users (api_user character varying UNIQUE, password character varying, active INTEGER);'
-docker exec -it -e PGPASSWORD=$PGPASSWORD "$_PG_CONTAINER" psql -d api -U api -c \
+docker exec -it -e PGPASSWORD=$PGPASSWORD_API "$_PG_CONTAINER" psql -d api -U api -c \
 	'ALTER TABLE users OWNER TO api;'
-docker exec -it -e PGPASSWORD=$PGPASSWORD "$_PG_CONTAINER" psql -d api -U api -c \
+docker exec -it -e PGPASSWORD=$PGPASSWORD_API "$_PG_CONTAINER" psql -d api -U api -c \
 	"INSERT INTO users VALUES ('test', '8d604831', 1);"
 
 sleep 1
