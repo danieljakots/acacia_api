@@ -15,7 +15,7 @@ _PG_VERSION=12.2
 [ $(docker network ls | grep -c "$_DOCKER_NET") -gt 0 ] && \
 	echo "cleaning network" && docker network rm "$_DOCKER_NET" > /dev/null
 
-[ $# -gt 0 ] && [ $1 = "stop" ] && exit 0
+[ ${1:-nah} = "stop" ] && exit 0
 
 set -e
 
