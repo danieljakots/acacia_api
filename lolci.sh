@@ -26,7 +26,15 @@ docker run -d --rm --name "$_PG_CONTAINER" --net "$_DOCKER_NET" -p 5432:5432 \
 	-e POSTGRES_PASSWORD=$PGPASSWORD_POSTGRES \
 	postgres:"$_PG_VERSION" -c 'shared_buffers=512MB'
 
-sleep 3
+set +e
+while true
+do
+	docker exec -it -e PGPASSWORD=$PGPASSWORD_POSTGRES \
+		"$_PG_CONTAINER" pg_isready
+	[ $? -eq 0 ] && break
+	sleep 0.01
+done
+set -e
 
 echo "initializing postgres"
 docker exec -it -e PGPASSWORD=$PGPASSWORD_POSTGRES "$_PG_CONTAINER" createuser -U postgres --no-password api
@@ -40,14 +48,18 @@ docker exec -it -e PGPASSWORD=$PGPASSWORD_API "$_PG_CONTAINER" psql -d api -U ap
 docker exec -it -e PGPASSWORD=$PGPASSWORD_API "$_PG_CONTAINER" psql -d api -U api -c \
 	"INSERT INTO users VALUES ('test', '8d604831', 1);"
 
-sleep 1
-
 echo "creating api"
 docker run -d --rm -p 8123:8123 --name api --net "$_DOCKER_NET" \
 	-e PG_HOST="$_PG_CONTAINER" -e PG_PASSWORD=$PGPASSWORD_API -e PG_USER=api -e PG_DB=api \
 	--mount type=tmpfs,destination=/tmpfs,tmpfs-mode=777,tmpfs-size=32M api:"$_API_VERSION"
 
-sleep 2
+set +e
+while true
+do
+	[ $(curl -s localhost:8123/ | grep -c "Hello world") -eq 1 ] && break
+	sleep 0.01
+done
+set -e
 
 echo "running regress test"
 python3 regress.py
