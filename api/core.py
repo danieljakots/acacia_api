@@ -2,26 +2,7 @@
 
 from flask import Flask, jsonify, request, make_response
 
-from .tools import (
-    require_appkey,
-    require_auth,
-    ip_get,
-    ip_add,
-    ip_delete,
-    ip_init,
-    ip_count,
-)
-
-# from tools import (
-#     require_appkey,
-#     require_auth,
-#     ip_get,
-#     ip_add,
-#     ip_delete,
-#     ip_init,
-#     ip_count,
-# )
-
+from api import tools
 
 app = Flask(__name__)
 
@@ -37,7 +18,7 @@ def ip():
 
 
 @app.route("/post", methods=("POST",))
-@require_auth
+@tools.require_auth
 def post():
     resp = jsonify(request.form.to_dict())
     resp.headers["X-OTHER"] = "ui"
@@ -46,7 +27,7 @@ def post():
 
 
 @app.route("/post-test", methods=("POST",))
-@require_auth
+@tools.require_auth
 def post_test():
     if request.form:
         resp = jsonify(request.form.to_dict())
@@ -64,50 +45,50 @@ def ua():
 
 
 @app.route("/headers")
-@require_appkey
+@tools.require_appkey
 def headers():
     headers = dict(request.headers.items())
     return jsonify(headers)
 
 
 @app.route("/v1/pf-init", methods=("GET",))
-@require_auth
+@tools.require_auth
 def v1_pf_init():
-    ip_init()
+    tools.ip_init()
     return ("", 204)
 
 
 @app.route("/v1/pf", methods=("GET",))
-@require_auth
+@tools.require_auth
 def v1_pf_get():
     order = request.args.get("order")
     if order and order.lower() != "ip":
         return make_response(jsonify({"error": "Bad Request"}), 400)
     if order and order.lower() == "ip":
         order = "ip"
-    results = ip_get(order=order)
+    results = tools.ip_get(order=order)
     return jsonify(results)
 
 
 @app.route("/v1/pf", methods=("POST",))
-@require_auth
+@tools.require_auth
 def v1_pf_post():
     if request.form:
         post_data = request.form.to_dict()
         if "IP" not in post_data.keys() or "source" not in post_data.keys():
             return make_response(jsonify({"error": "Bad Request: key missing"}), 400)
-        message, status_code = ip_add(
+        message, status_code = tools.ip_add(
             [{"IP": post_data["IP"], "source": post_data["source"]}]
         )
     elif request.json:
-        (message, status_code) = ip_add(request.get_json())
+        (message, status_code) = tools.ip_add(request.get_json())
     else:
         return make_response(jsonify({"error": "Bad Request: not a form"}), 400)
     return (jsonify(message), status_code)
 
 
 @app.route("/v1/pf", methods=("DELETE",))
-@require_auth
+@tools.require_auth
 def v1_pf_delete():
     if request.json:
         data = request.get_json()
@@ -116,27 +97,27 @@ def v1_pf_delete():
                 IP = entry["IP"]
             except KeyError:
                 return make_response(jsonify({"error": "Bad Request"}), 400)
-            ip_delete(IP)
+            tools.ip_delete(IP)
     return ("", 204)
 
 
 @app.route("/v1/healthcheck", methods=("GET",))
 def v1_healthcheck():
-    results = ip_count()
+    results = tools.ip_count()
     if results < 3:
         return make_response(jsonify({"error": "Too few results, check health"}), 500)
     return jsonify(results)
 
 
 @app.route("/v2/pf", methods=("GET",))
-@require_auth
+@tools.require_auth
 def v2_pf_get():
     order = request.args.get("order")
     if order and order.lower() != "ip":
         return make_response(jsonify({"error": "Bad Request"}), 400)
     if order and order.lower() == "ip":
         order = "ip"
-    results = ip_get(order=order)
+    results = tools.ip_get(order=order)
     IP_count = len(results)
     results = {"count": IP_count, "IP": results}
     return jsonify(results)
@@ -144,7 +125,7 @@ def v2_pf_get():
 
 @app.route("/v2/healthcheck", methods=("GET",))
 def v2_healthcheck():
-    results = ip_count()
+    results = tools.ip_count()
     if results < 3:
         return make_response(jsonify({"error": "Too few results, check health"}), 500)
     return jsonify("OK")
