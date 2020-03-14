@@ -53,13 +53,15 @@ docker run -d --rm -p 8123:8123 --name api --net "$_DOCKER_NET" \
 	-e PG_HOST="$_PG_CONTAINER" -e PG_PASSWORD=$PGPASSWORD_API -e PG_USER=api -e PG_DB=api \
 	--mount type=tmpfs,destination=/tmpfs,tmpfs-mode=777,tmpfs-size=32M api:"$_API_VERSION"
 
+echo -n "waiting for api"
 set +e
 while true
 do
 	[ $(curl -s localhost:8123/ | grep -c "Hello world") -eq 1 ] && break
-	sleep 0.01
+	sleep 0.1
+	echo -n "."
 done
 set -e
 
-echo "running regress test"
+echo -e "\nrunning regress test"
 python3 regress.py
