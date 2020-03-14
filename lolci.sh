@@ -65,5 +65,5 @@ do
 done
 set -e
 
-echo -e "\nrunning regress test"
+echo "\nrunning regress test"
 python3 regress.py
