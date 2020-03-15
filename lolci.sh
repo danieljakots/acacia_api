@@ -57,11 +57,14 @@ docker run -d --rm -p 8123:8123 --name api --net "$_DOCKER_NET" \
 
 echo -n "waiting for api"
 set +e
+counter=0
 while true
 do
 	[ $(curl -s localhost:8123/ | grep -c "Hello world") -eq 1 ] && break
 	sleep 0.1
 	echo -n "."
+	counter=$(($counter + 1))
+	[ $counter -gt 30 ] && echo " api doesn't start" && exit 1
 done
 set -e
 
