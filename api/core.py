@@ -7,17 +7,14 @@ from api import tools
 app = Flask(__name__)
 
 
-@app.route("/")
 def hello():
     return jsonify("Hello world!")
 
 
-@app.route("/ip")
 def ip():
     return jsonify(origin=request.headers.get("X-Forwarded-For", request.remote_addr))
 
 
-@app.route("/post", methods=("POST",))
 @tools.require_auth
 def post():
     resp = jsonify(request.form.to_dict())
@@ -26,7 +23,6 @@ def post():
     return resp
 
 
-@app.route("/post-test", methods=("POST",))
 @tools.require_auth
 def post_test():
     if request.form:
@@ -38,27 +34,23 @@ def post_test():
     return "nope"
 
 
-@app.route("/ua")
 def ua():
     headers = dict(request.headers.items())
     return jsonify({"User-Agent": headers["User-Agent"]})
 
 
-@app.route("/headers")
 @tools.require_appkey
 def headers():
     headers = dict(request.headers.items())
     return jsonify(headers)
 
 
-@app.route("/v1/pf-init", methods=("GET",))
 @tools.require_auth
 def v1_pf_init():
     tools.ip_init()
     return ("", 204)
 
 
-@app.route("/v1/pf", methods=("GET",))
 @tools.require_auth
 def v1_pf_get():
     order = request.args.get("order")
@@ -70,7 +62,6 @@ def v1_pf_get():
     return jsonify(results)
 
 
-@app.route("/v1/pf", methods=("POST",))
 @tools.require_auth
 def v1_pf_post():
     if request.form:
@@ -87,7 +78,6 @@ def v1_pf_post():
     return (jsonify(message), status_code)
 
 
-@app.route("/v1/pf", methods=("DELETE",))
 @tools.require_auth
 def v1_pf_delete():
     if request.json:
@@ -101,7 +91,6 @@ def v1_pf_delete():
     return ("", 204)
 
 
-@app.route("/v1/healthcheck", methods=("GET",))
 def v1_healthcheck():
     results = tools.ip_count()
     if results < 3:
@@ -109,7 +98,6 @@ def v1_healthcheck():
     return jsonify(results)
 
 
-@app.route("/v2/pf", methods=("GET",))
 @tools.require_auth
 def v2_pf_get():
     order = request.args.get("order")
@@ -123,13 +111,26 @@ def v2_pf_get():
     return jsonify(results)
 
 
-@app.route("/v2/healthcheck", methods=("GET",))
 def v2_healthcheck():
     results = tools.ip_count()
     if results < 3:
         return make_response(jsonify({"error": "Too few results, check health"}), 500)
     return jsonify("OK")
 
+
+app.add_url_rule("/", view_func=hello)
+app.add_url_rule("/ip", view_func=ip)
+app.add_url_rule("/post", view_func=post, methods=("POST",))
+app.add_url_rule("/post-test", view_func=post_test, methods=("POST",))
+app.add_url_rule("/ua", view_func=ua,)
+app.add_url_rule("/headers", view_func=headers)
+app.add_url_rule("/v1/pf-init", view_func=v1_pf_init, methods=("GET",))
+app.add_url_rule("/v1/pf", view_func=v1_pf_get, methods=("GET",))
+app.add_url_rule("/v1/pf", view_func=v1_pf_post, methods=("POST",))
+app.add_url_rule("/v1/pf", view_func=v1_pf_delete, methods=("DELETE",))
+app.add_url_rule("/v1/healthcheck", view_func=v1_healthcheck, methods=("GET",))
+app.add_url_rule("/v2/pf", view_func=v2_pf_get, methods=("GET",))
+app.add_url_rule("/v2/healthcheck", view_func=v2_healthcheck, methods=("GET",))
 
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=8080, debug=True)
