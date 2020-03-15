@@ -1,1 +1,1 @@
-from api.core import app as application
+from api.route import app as application
