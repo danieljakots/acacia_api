@@ -10,4 +10,5 @@ COPY ./api /home/snek/app/api/
 
 EXPOSE 8123
 
-CMD ["gunicorn", "--log-file=-", "--access-logfile=-", "--worker-tmp-dir", "/tmpfs", "-b", "0.0.0.0:8123", "--workers", "8", "wsgi:application"]
+CMD ["gunicorn", "--log-file=-", "--access-logfile=-", "--worker-tmp-dir", \
+     "/tmpfs", "-b", "0.0.0.0:8123", "--workers", "8", "wsgi:application"]
