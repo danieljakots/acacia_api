@@ -17,21 +17,15 @@ def ip():
 
 @tools.require_auth
 def post():
-    resp = jsonify(request.form.to_dict())
+    if request.form:
+        resp = jsonify(request.form.to_dict())
+    elif request.json:
+        resp = jsonify(request.get_json())
+    else:
+        return "nope"
     resp.headers["X-OTHER"] = "ui"
     resp.headers["X-OTTER"] = "Not Jean Canard"
     return resp
-
-
-@tools.require_auth
-def post_test():
-    if request.form:
-        resp = jsonify(request.form.to_dict())
-        return resp
-    if request.json:
-        resp = jsonify(request.get_json())
-        return resp
-    return "nope"
 
 
 def ua():
@@ -121,7 +115,6 @@ def v2_healthcheck():
 app.add_url_rule("/", view_func=hello)
 app.add_url_rule("/ip", view_func=ip)
 app.add_url_rule("/post", view_func=post, methods=("POST",))
-app.add_url_rule("/post-test", view_func=post_test, methods=("POST",))
 app.add_url_rule("/ua", view_func=ua,)
 app.add_url_rule("/headers", view_func=headers)
 app.add_url_rule("/v1/pf-init", view_func=v1_pf_init, methods=("GET",))
