@@ -2,8 +2,8 @@
 
 from flask import Flask
 
-from api import v1
-from api import v2
+from api import v1_pf
+from api import v2_pf
 from api import misc
 
 app = Flask(__name__)
@@ -15,26 +15,26 @@ app.add_url_rule("/post", view_func=misc.post, methods=("POST",))
 app.add_url_rule("/ua", view_func=misc.ua)
 app.add_url_rule("/headers", view_func=misc.headers)
 app.add_url_rule(
-    "/v1/pf-init", endpoint="v1_pf_init", view_func=v1.pf_init, methods=("GET",)
+    "/v1/pf-init", endpoint="v1_pf_init", view_func=v1_pf.pf_init, methods=("GET",)
 )
-app.add_url_rule("/v1/pf", endpoint="v1_pf_get", view_func=v1.pf_get, methods=("GET",))
+app.add_url_rule("/v1/pf", endpoint="v1_pf_get", view_func=v1_pf.pf_get, methods=("GET",))
 app.add_url_rule(
-    "/v1/pf", endpoint="v1_pf_post", view_func=v1.pf_post, methods=("POST",)
+    "/v1/pf", endpoint="v1_pf_post", view_func=v1_pf.pf_post, methods=("POST",)
 )
 app.add_url_rule(
-    "/v1/pf", endpoint="v1_pf_delete", view_func=v1.pf_delete, methods=("DELETE",)
+    "/v1/pf", endpoint="v1_pf_delete", view_func=v1_pf.pf_delete, methods=("DELETE",)
 )
 app.add_url_rule(
     "/v1/healthcheck",
     endpoint="v1_healthcheck",
-    view_func=v1.healthcheck,
+    view_func=v1_pf.healthcheck,
     methods=("GET",),
 )
-app.add_url_rule("/v2/pf", endpoint="v2_pf_get", view_func=v2.pf_get, methods=("GET",))
+app.add_url_rule("/v2/pf", endpoint="v2_pf_get", view_func=v2_pf.pf_get, methods=("GET",))
 app.add_url_rule(
     "/v2/healthcheck",
     endpoint="v2_healthcheck",
-    view_func=v2.healthcheck,
+    view_func=v2_pf.healthcheck,
     methods=("GET",),
 )
 
