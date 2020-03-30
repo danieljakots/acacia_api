@@ -21,6 +21,8 @@ _PG_VERSION=12.2
 
 set -e
 
+docker build -t api .
+
 echo "creating network"
 docker network create "$_DOCKER_NET"
 echo "creating postgres"
