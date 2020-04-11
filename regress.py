@@ -91,7 +91,7 @@ def main():
 
     # good stuff again
     data = '[{"IP": "1.1.1.1", "source": "test"}, {"IP": "2.2.2.2", "source": "test"}]'
-    rcode = 200
+    rcode = 204
     msg = "GOOD DATA AGAIN"
     post(data, rcode, msg)
     shouldbe_data = (
@@ -117,7 +117,7 @@ def main():
 
     # only already given
     data = '[{"IP": "3.3.3.3", "source": "test"}, {"IP": "2.2.2.2", "source": "test"}]'
-    rcode = 200
+    rcode = 204
     msg = "ALREADY GIVEN DATA"
     post(data, rcode, msg)
     shouldbe_data = '[["209.229.0.0/16"], ["219.229.0.2/32"], ["1.1.1.1/32"], ["2.2.2.2/32"], ["3.3.3.3/32"], ["4.4.4.4/32"]]'

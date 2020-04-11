@@ -107,8 +107,6 @@ def ip_add(data):
     database = db_connect()
     cursor = database.cursor()
 
-    any_200 = 0
-    any_204 = 0
     for entry in data:
         try:
             IP = entry["IP"]
@@ -120,30 +118,19 @@ def ip_add(data):
         values = (IP, time, source)
         try:
             cursor.execute(
-                "INSERT INTO pf_ip_ban (ip, updated_at, source) VALUES (%s, %s, %s);",
+                "INSERT INTO pf_ip_ban (ip, updated_at, source) VALUES (%s, %s, %s) ON CONFLICT DO NOTHING;",
                 values,
             )
         # Most likely a problem with the CIDR
         except psycopg2.DataError as e:
             database.rollback()
             return (str(e), 400)
-        # Unicity clause
-        except psycopg2.IntegrityError as e:
-            message = str(e)
-            any_200 = 1
-            database.rollback()
         else:
-            any_204 = 1
             database.commit()
     database.commit()
     cursor.close()
     database.close()
-    if any_204:
-        return ("", 204)
-    elif any_200:
-        return (message, 200)
-    else:
-        return ("How did you get there?", 400)
+    return ("", 204)
 
 
 def ip_delete(IP):
