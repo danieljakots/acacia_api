@@ -36,7 +36,7 @@ def check_auth(username, password):
     # return username == "qwe" and password == "qwe"
     database = db_connect()
     cursor = database.cursor()
-    cursor.execute("select password, active from users where api_user=%s;", (username,))
+    cursor.execute("SELECT password, active FROM users WHERE api_user=%s;", (username,))
     results = cursor.fetchone()
     if results[0] != password or results[1] != 1:
         cursor.close()
@@ -92,9 +92,9 @@ def ip_get(order=None):
     database = db_connect()
     cursor = database.cursor()
     if order == "ip":
-        cursor.execute("select ip from pf_ip_ban order by ip;")
+        cursor.execute("SELECT ip FROM pf_ip_ban ORDER BY ip;")
     else:
-        cursor.execute("select ip from pf_ip_ban;")
+        cursor.execute("SELECT ip FROM pf_ip_ban;")
     results = cursor.fetchall()
     cursor.close()
     database.commit()
@@ -162,7 +162,7 @@ def ip_delete(IP):
 def ip_count():
     database = db_connect()
     cursor = database.cursor()
-    cursor.execute("select count(ip) from pf_ip_ban;")
+    cursor.execute("SELECT COUNT(ip) from pf_ip_ban;")
     results = cursor.fetchone()[0]
     cursor.close()
     database.commit()
