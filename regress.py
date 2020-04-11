@@ -47,9 +47,9 @@ def get(shouldbe_data, order=None, rcode=200, version=1):
 def post(data, rcode, msg):
     post = requests.post(f"{API}/v1/pf", headers=HEADERS, data=data, auth=IDENT)
     if post.status_code != rcode:
-        print(f"{msg} bad status code")
+        print(f"POST {msg} bad status code")
+        print(f"got {post.status_code}, should have been {rcode}")
         print(post.text)
-        print(post.status_code)
         sys.exit(1)
     print(f"{msg} OK", end='... ')
 
