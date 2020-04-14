@@ -37,12 +37,10 @@ def check_auth(username, password):
     cursor = database.cursor()
     cursor.execute("SELECT password, active FROM users WHERE api_user=%s;", (username,))
     results = cursor.fetchone()
-    if results[0] != password or results[1] != 1:
-        cursor.close()
-        database.close()
-        return False
     cursor.close()
     database.close()
+    if results[0] != password or results[1] != 1:
+        return False
     return True
 
 
