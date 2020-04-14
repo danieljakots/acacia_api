@@ -33,7 +33,6 @@ def check_auth(username, password):
     """This function is called to check if a username /
     password combination is valid.
     """
-    # return username == "qwe" and password == "qwe"
     database = db_connect()
     cursor = database.cursor()
     cursor.execute("SELECT password, active FROM users WHERE api_user=%s;", (username,))
