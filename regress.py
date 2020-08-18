@@ -27,7 +27,8 @@ def get(shouldbe_data, order=None, rcode=200, version=1):
         params = {"order": order}
     else:
         params = {}
-    get = requests.get(f"{API}/v{version}/pf", headers=HEADERS, params=params, auth=IDENT)
+    get = requests.get(f"{API}/v{version}/pf", headers=HEADERS, params=params,
+                       auth=IDENT)
     if get.status_code != rcode:
         print(f"GET v{version} bad status code")
         print(f"got {get.status_code}, should have been {rcode}")
@@ -104,7 +105,8 @@ def main():
     rcode = 204
     msg = "GOOD DATA + ALREADY GIVEN DATA"
     post(data, rcode, msg)
-    shouldbe_data = '[["198.51.100.0/26"], ["198.51.100.212/32"], ["1.1.1.1/32"], ["2.2.2.2/32"], ["3.3.3.3/32"]]'
+    shouldbe_data = '[["198.51.100.0/26"], ["198.51.100.212/32"], ["1.1.1.1/32"],' \
+        '["2.2.2.2/32"], ["3.3.3.3/32"]]'
     get(shouldbe_data)
 
     # both good and already given but reverse order
@@ -112,7 +114,8 @@ def main():
     rcode = 204
     msg = "ALREADY GIVEN DATA + GOOD DATA"
     post(data, rcode, msg)
-    shouldbe_data = '[["198.51.100.0/26"], ["198.51.100.212/32"], ["1.1.1.1/32"], ["2.2.2.2/32"], ["3.3.3.3/32"], ["4.4.4.4/32"]]'
+    shouldbe_data = '[["198.51.100.0/26"], ["198.51.100.212/32"], ["1.1.1.1/32"],' \
+        '["2.2.2.2/32"], ["3.3.3.3/32"], ["4.4.4.4/32"]]'
     get(shouldbe_data)
 
     # only already given
@@ -120,7 +123,8 @@ def main():
     rcode = 204
     msg = "ALREADY GIVEN DATA"
     post(data, rcode, msg)
-    shouldbe_data = '[["198.51.100.0/26"], ["198.51.100.212/32"], ["1.1.1.1/32"], ["2.2.2.2/32"], ["3.3.3.3/32"], ["4.4.4.4/32"]]'
+    shouldbe_data = '[["198.51.100.0/26"], ["198.51.100.212/32"], ["1.1.1.1/32"],' \
+        '["2.2.2.2/32"], ["3.3.3.3/32"], ["4.4.4.4/32"]]'
     get(shouldbe_data)
 
     # delete
@@ -128,7 +132,8 @@ def main():
     rcode = 204
     msg = "DELETE DATA"
     delete(data, rcode, msg)
-    shouldbe_data = '[["198.51.100.0/26"], ["198.51.100.212/32"], ["1.1.1.1/32"], ["4.4.4.4/32"]]'
+    shouldbe_data = '[["198.51.100.0/26"], ["198.51.100.212/32"], ["1.1.1.1/32"],'\
+        '["4.4.4.4/32"]]'
     get(shouldbe_data)
 
     # get bad order
@@ -141,10 +146,12 @@ def main():
 
     # get good order
     print("GET v1 GOOD ORDERED DATA", end="... ")
-    shouldbe_data = '[["1.1.1.1/32"], ["4.4.4.4/32"], ["198.51.100.0/26"], ["198.51.100.212/32"]]'
+    shouldbe_data = '[["1.1.1.1/32"], ["4.4.4.4/32"], ["198.51.100.0/26"],'\
+        '["198.51.100.212/32"]]'
     get(shouldbe_data, order="IP")
     print("GET v2 GOOD ORDERED DATA", end="... ")
-    shouldbe_data = '{"IP": [["1.1.1.1/32"], ["4.4.4.4/32"], ["198.51.100.0/26"], ["198.51.100.212/32"]], "count": 4}'
+    shouldbe_data = '{"IP": [["1.1.1.1/32"], ["4.4.4.4/32"], ["198.51.100.0/26"],' \
+        '["198.51.100.212/32"]], "count": 4}'
     get(shouldbe_data, order="IP", version=2)
     print("FINISHED")
 
