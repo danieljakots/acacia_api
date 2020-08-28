@@ -15,19 +15,6 @@ def nope():
     abort(503, fake_msg)
 
 
-# The actual decorator function
-def require_appkey(view_function):
-    @wraps(view_function)
-    # the new, post-decoration function. Note *args and **kwargs here.
-    def decorated_function(*args, **kwargs):
-        if request.headers.get("key") and request.headers.get("key") == "blih":
-            return view_function(*args, **kwargs)
-        else:
-            nope()
-
-    return decorated_function
-
-
 # INSERT INTO USERS (api_user, password, active) VALUES ('.chown.me', 'uuid', 1);
 def check_auth(username, password):
     """This function is called to check if a username /
