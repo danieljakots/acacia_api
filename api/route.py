@@ -11,9 +11,7 @@ app = Flask(__name__)
 
 app.add_url_rule("/", view_func=misc.hello)
 app.add_url_rule("/ip", view_func=misc.ip)
-app.add_url_rule("/post", view_func=misc.post, methods=("POST",))
 app.add_url_rule("/ua", view_func=misc.ua)
-app.add_url_rule("/headers", view_func=misc.headers)
 app.add_url_rule(
     "/v1/pf-init", endpoint="v1_pf_init", view_func=v1_pf.pf_init, methods=("GET",)
 )
