@@ -5,7 +5,6 @@ import sys
 
 import requests
 
-# API = "https://api.chown.me"
 API = "http://localhost:8123"
 HEADERS = {"Content-Type": "application/json"}
 IDENT = ("test", "8d604831")

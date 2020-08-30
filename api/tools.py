@@ -15,7 +15,7 @@ def nope():
     abort(503, fake_msg)
 
 
-# INSERT INTO USERS (api_user, password, active) VALUES ('.chown.me', 'uuid', 1);
+# INSERT INTO USERS (api_user, password, active) VALUES ('machine.example.com', 'uuid', 1);
 def check_auth(username, password):
     """This function is called to check if a username /
     password combination is valid.
