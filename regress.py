@@ -68,9 +68,6 @@ def main():
     shouldbe_data = '[["198.51.100.0/26"], ["198.51.100.212/32"]]'
     get(shouldbe_data)
 
-    shouldbe_data = '{"IP": [["198.51.100.0/26"], ["198.51.100.212/32"]], "count": 2}'
-    get(shouldbe_data, version=2)
-
     # missing source IP
     data = '[{"IP": "1.1.1.1"}, {"IP": "2.2.2.2"}]'
     rcode = 400
@@ -139,19 +136,12 @@ def main():
     print("GET v1 BAD ORDERED DATA", end="... ")
     shouldbe_data = '{"error": "Bad Request"}'
     get(shouldbe_data, order="lol-IP", rcode=400)
-    print("GET v2 BAD ORDERED DATA", end="... ")
-    shouldbe_data = '{"error": "Bad Request"}'
-    get(shouldbe_data, order="lol-IP", rcode=400, version=2)
 
     # get good order
     print("GET v1 GOOD ORDERED DATA", end="... ")
     shouldbe_data = '[["1.1.1.1/32"], ["4.4.4.4/32"], ["198.51.100.0/26"],'\
         '["198.51.100.212/32"]]'
     get(shouldbe_data, order="IP")
-    print("GET v2 GOOD ORDERED DATA", end="... ")
-    shouldbe_data = '{"IP": [["1.1.1.1/32"], ["4.4.4.4/32"], ["198.51.100.0/26"],' \
-        '["198.51.100.212/32"]], "count": 4}'
-    get(shouldbe_data, order="IP", version=2)
     print("FINISHED")
 
 
