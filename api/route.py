@@ -22,7 +22,6 @@ app.add_url_rule(
 app.add_url_rule(
     "/v1/pf", endpoint="v1_pf_delete", view_func=v1_pf.pf_delete, methods=("DELETE",)
 )
-app.add_url_rule("/v2/pf", endpoint="v2_pf_get", view_func=v2_pf.pf_get, methods=("GET",))
 app.add_url_rule(
     "/v2/healthcheck",
     endpoint="v2_healthcheck",
