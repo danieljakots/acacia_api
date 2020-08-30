@@ -15,7 +15,8 @@ app.add_url_rule("/ua", view_func=misc.ua)
 app.add_url_rule(
     "/v1/pf-init", endpoint="v1_pf_init", view_func=v1_pf.pf_init, methods=("GET",)
 )
-app.add_url_rule("/v1/pf", endpoint="v1_pf_get", view_func=v1_pf.pf_get, methods=("GET",))
+app.add_url_rule("/v1/pf", endpoint="v1_pf_get", view_func=v1_pf.pf_get,
+                 methods=("GET",))
 app.add_url_rule(
     "/v1/pf", endpoint="v1_pf_post", view_func=v1_pf.pf_post, methods=("POST",)
 )
