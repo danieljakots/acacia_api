@@ -1,6 +1,6 @@
 #!/bin/sh
 
-docker build /home/danj/git/git.chown.me/api -t api:latest
+docker build . -t api:latest
 
 export PGPASSWORD_POSTGRES=hunter2
 export PGPASSWORD_API=hunter3
