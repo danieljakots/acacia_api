@@ -38,6 +38,8 @@ do
 	[ $? -eq 0 ] && break
 	sleep 0.01
 done
+# give a bit more time to pgsql
+sleep 0.5
 set -e
 
 echo "initializing postgres"
