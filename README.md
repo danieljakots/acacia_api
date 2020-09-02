@@ -64,8 +64,8 @@ everything and you don't have anything to do. But you need docker.
 [
 	["198.51.100.0/26"],
 	["198.51.100.212/32"],
-	["1.1.1.1/32"],
-	["4.4.4.4/32"]
+	["192.0.2.1/32"],
+	["198.51.100.57/32"]
 ]
 `
 
@@ -73,10 +73,10 @@ everything and you don't have anything to do. But you need docker.
 
 `
 [{
-	"IP": "1.1.1.1",
+	"IP": "192.0.2.1",
 	"source": "test"
 }, {
-	"IP": "2.2.2.2",
+	"IP": "203.0.113.253",
 	"source": "test"
 }]
 `
@@ -85,8 +85,8 @@ everything and you don't have anything to do. But you need docker.
 
 `
 [{
-	"IP": "3.3.3.3"
+	"IP": "203.0.113.42"
 }, {
-	"IP": "2.2.2.2"
+	"IP": "203.0.113.253"
 }]
 `
