@@ -1,12 +1,12 @@
 # acacia_api
 
-This is a basic REST api to store IP addresses in postgresql.
+This is a basic REST API to store IP addresses in PostgreSQL.
 
 # Installation
 
 ## With docker
 
-The dockerfile sets gunicorn's --worker-tmp-dir to a tmpfs to avoid problems.
+The Dockerfile sets gunicorn's --worker-tmp-dir to a tmpfs to avoid problems.
 
 ```
 $ docker run -d --rm -p 8123:8123 --name api -e PG_HOST=XXX -e PG_PASSWORD=XXX \
