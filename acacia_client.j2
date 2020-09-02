@@ -1,0 +1,337 @@
+#!/usr/bin/env python3
+
+# Copyright (c) 2020 Daniel Jakots
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to
+# deal in the Software without restriction, including without limitation the
+# rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+# sell copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+# IN THE SOFTWARE.
+
+
+import argparse
+import datetime
+import inspect
+import ipaddress
+import socket
+import subprocess
+import sys
+
+import redis
+
+import requests
+
+API = "https://api.chown.me"
+IDENT = ("{{ pf_api_user }}", "{{ pf_api_passwd }}")
+HEADERS = {"Content-Type": "application/json"}
+PF_TABLE_EXPIRE = 7200
+TABLE_FILE_PATH = "/etc/pf.api"
+TABLE_NAME = "api_bans"
+
+
+def now_to_strftime():
+    now = datetime.datetime.now()
+    return now.strftime("%Y/%m/%d %H:%M:%S")
+
+
+def pf_table_list():
+    command = subprocess.run(["pfctl", "-sT"], stdout=subprocess.PIPE, encoding="utf-8")
+    for table in command.stdout.split():
+        if table.startswith("brute"):
+            if VERBOSE == 2:
+                print(f"table {table} listed")
+            yield table
+
+
+def pf_table_content_list(table):
+    hostname = socket.gethostname()
+    timestamp = now_to_strftime()
+    command = subprocess.run(
+        ["pfctl", "-t", table, "-Ts"], stdout=subprocess.PIPE, encoding="utf-8"
+    )
+    ip = []
+    for line in command.stdout.split():
+        data = {"IP": line, "source": f"{timestamp} - {hostname}/{table}"}
+        if VERBOSE == 2:
+            print(data)
+        ip.append(data)
+    return ip
+
+
+def pf_tables_expire():
+    for table in pf_table_list():
+        pfctl = subprocess.run(
+            ["pfctl", "-t", table, "-Te", str(PF_TABLE_EXPIRE)],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            encoding="utf-8",
+        )
+        if VERBOSE != 0:
+            print(pfctl.stdout.strip())
+
+
+def pf_reload():
+    pfctl = subprocess.run(
+        ["pfctl", "-t", TABLE_NAME, "-Tr", "-f", TABLE_FILE_PATH],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        encoding="utf-8",
+    )
+    if VERBOSE != 0:
+        print(pfctl.stdout.strip())
+
+
+def extsource_get(url):
+    try:
+        g = requests.get(url, timeout=15)
+    except (requests.exceptions.ConnectionError, requests.exceptions.ReadTimeout):
+        print(f"{url} is unresponsive")
+        sys.exit(1)
+    return g.text
+
+
+def extsource_parse(lines, source):
+    timestamp = now_to_strftime()
+    IP = []
+    for line in lines.split("\n"):
+        if not line or line[0] == "#":
+            continue
+        if ":" in line:
+            continue
+        IP.append({"IP": line, "source": f"{timestamp} - {source}"})
+    return IP
+
+
+def emerging():
+    emerging_ip = extsource_get(
+        "https://rules.emergingthreats.net/fwrules/emerging-Block-IPs.txt"
+    )
+    IP = extsource_parse(emerging_ip, "emerging")
+    api_ban_add(IP)
+
+
+def blocklistde():
+    blocklistde_ip = extsource_get("https://lists.blocklist.de/lists/all.txt")
+    IP = extsource_parse(blocklistde_ip, "blocklistde")
+    api_ban_add(IP)
+
+
+def api_ban_add(IP):
+    try:
+        post = requests.post(
+            f"{API}/v1/pf", headers=HEADERS, json=IP, auth=IDENT, timeout=15
+        )
+    except (requests.exceptions.ConnectionError, requests.exceptions.ReadTimeout):
+        if VERBOSE != 0:
+            print("Couldn't connect to the api")
+        sys.exit(0)
+    func_name = inspect.currentframe().f_code.co_name
+    if VERBOSE == 2 or post.status_code != 204 and post.status_code != 200:
+        print(f"{func_name} status code: {post.status_code}")
+        print(post.text)
+    if post.status_code != 204 and post.status_code != 200:
+        sys.exit(1)
+    if VERBOSE > 0:
+        print(f"{IP} successfully added to the api")
+
+
+def api_ban_count():
+    try:
+        get = requests.get(f"{API}/v1/pf", auth=IDENT, timeout=15)
+    except (requests.exceptions.ConnectionError, requests.exceptions.ReadTimeout):
+        if VERBOSE != 0:
+            print("Couldn't connect to the api")
+        sys.exit(0)
+    func_name = inspect.currentframe().f_code.co_name
+    if get.status_code != 200 or VERBOSE == 2:
+        print(f"{func_name} status code: {get.status_code}")
+        print(get.text)
+    if get.status_code != 200:
+        sys.exit(1)
+    return len(get.json())
+
+
+def api_ban_list():
+    try:
+        get = requests.get(f"{API}/v1/pf", auth=IDENT, timeout=15)
+    except (requests.exceptions.ConnectionError, requests.exceptions.ReadTimeout):
+        if VERBOSE != 0:
+            print("Couldn't connect to the api")
+        sys.exit(0)
+    func_name = inspect.currentframe().f_code.co_name
+    if get.status_code != 200 or VERBOSE == 2:
+        print(f"{func_name} status code: {get.status_code}")
+        print(get.text)
+    if get.status_code != 200:
+        sys.exit(1)
+    # json will be [['209.229.0.0/16'], ['219.229.0.2/32']]
+    for field in get.json():
+        yield (field[0])
+
+
+def api_ban_delete(IP):
+    delete = requests.delete(
+        f"{API}/v1/pf", headers=HEADERS, json=IP, auth=IDENT, timeout=15
+    )
+    func_name = inspect.currentframe().f_code.co_name
+    if delete.status_code != 204 or VERBOSE == 2:
+        print(f"{func_name} status code: {delete.status_code}")
+        print(delete.text)
+    if delete.status_code != 204:
+        sys.exit(1)
+    if VERBOSE > 0:
+        print(f"{IP} successfully deleted from the api")
+
+
+def pf_table_content_change(action, ip):
+    if action != "add" and action != "delete":
+        print("wrong action")
+        sys.exit(1)
+    pfctl = subprocess.run(
+        ["pfctl", "-t", TABLE_NAME, "-T", action, ip],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        encoding="utf-8",
+    )
+    if VERBOSE != 0:
+        print(pfctl.stdout.strip())
+
+
+def cron(mode):
+    for table in pf_table_list():
+        IP = pf_table_content_list(table)
+        if not IP:
+            continue
+        if mode == "api":
+            api_ban_add(IP)
+        elif mode == "pubsub":
+            pubsub(IP)
+
+    if mode == "pubsub":
+        return
+    blocks = []
+    for ip in api_ban_list():
+        blocks.append(ip)
+
+    with open(TABLE_FILE_PATH, "w") as f:
+        for IP in blocks:
+            f.write(f"{IP}\n")
+    pf_reload()
+
+
+def parse_cli():
+    parser = argparse.ArgumentParser()
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument("-q", "--quiet", help="Shut up", action="store_true")
+    group.add_argument("-v", "--verbose", help="Be verbose", action="store_true")
+    subparsers = parser.add_subparsers(
+        help="Type of action you want to do", dest="verb", required=True
+    )
+
+    parser_add = subparsers.add_parser("add", help="Add a new IP")
+    parser_add.add_argument("ip", help="IP to add to the api")
+
+    parser_add.add_argument(
+        "--only-api", action="store_true", help="Use only the REST api"
+    )
+    parser_add.add_argument(
+        "--only-pubsub", action="store_true", help="Use only pubsub"
+    )
+
+    parser_delete = subparsers.add_parser("delete", help="Delete an IP")
+    parser_delete.add_argument("ip", help="IP to delete to the system")
+
+    parser_cron = subparsers.add_parser("cron", help="Cron mode")
+    group = parser_cron.add_mutually_exclusive_group(required=True)
+    group.add_argument("--only-api", action="store_true", help="Use only the REST api")
+    group.add_argument("--only-pubsub", action="store_true", help="Use only pubsub")
+
+    subparsers.add_parser("count", help="Count how many IP")
+    subparsers.add_parser("extsources", help="Add IP from external sources")
+    subparsers.add_parser("list", help="List IP from api")
+    return parser.parse_args()
+
+
+def pubsub(ip):
+    r = redis.Redis(
+        host="db1.chown.me",
+        port=6380,
+        db=0,
+        ssl=True,
+        ssl_ca_certs="/etc/ssl/chownme-cacert.pem",
+        ssl_certfile="/etc/ssl/chownme.crt",
+        ssl_keyfile="/etc/ssl/private/chownme.key",
+        ssl_check_hostname=True,
+    )
+    r.publish("block", ip)
+    if VERBOSE > 0:
+        print(f"{ip} successfully published on pubsub")
+
+
+def add_ip_api(IP):
+    timestamp = now_to_strftime()
+    ip_addresses = []
+    ip_addresses.append({"IP": IP, "source": f"{timestamp} - manual"})
+    api_ban_add(ip_addresses)
+
+
+def validate_ip(IP):
+    try:
+        ipaddress.ip_address(IP)
+    except ValueError:
+        print(f"{IP} is not valid", file=sys.stderr)
+        sys.exit(1)
+
+
+def main():
+    global VERBOSE
+    VERBOSE = 1
+    args = parse_cli()
+    if args.quiet:
+        VERBOSE = 0
+    elif args.verbose:
+        VERBOSE = 2
+    if args.verb == "cron":
+        if args.only_pubsub:
+            mode = "pubsub"
+        if args.only_api:
+            mode = "api"
+        cron(mode)
+        if args.only_api:
+            pf_tables_expire()
+    elif args.verb == "extsources":
+        blocklistde()
+        emerging()
+    elif args.verb == "add":
+        validate_ip(args.ip)
+        if not args.only_pubsub:
+            add_ip_api(args.ip)
+        if not args.only_api:
+            pubsub(args.ip)
+    elif args.verb == "delete":
+        validate_ip(args.ip)
+        ip_addresses = []
+        ip_addresses.append({"IP": args.ip})
+        api_ban_delete(ip_addresses)
+        pf_table_content_change("delete", args.ip)
+    elif args.verb == "count":
+        print(f"{str(api_ban_count())} IP addresses in database")
+    elif args.verb == "list":
+        for IP in api_ban_list():
+            print(IP)
+
+
+if __name__ == "__main__":
+    main()

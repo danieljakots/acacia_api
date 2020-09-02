@@ -1,6 +1,8 @@
 # acacia_api
 
 This is a basic REST API to store IP addresses in PostgreSQL.
+A client is provided: `acacia_client.j2` (note that it can also interact with
+*acacia_pubsub*).
 
 # Installation
 
