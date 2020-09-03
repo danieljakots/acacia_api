@@ -62,10 +62,10 @@ def ip_init():
         "CREATE TABLE pf_ip_ban (id SERIAL PRIMARY KEY, ip CIDR UNIQUE, updated_at timestamp without time zone, source character varying);"
     )
     cursor.execute(
-        "INSERT INTO pf_ip_ban (ip, updated_at, source) VALUES ('198.51.100.0/26', '2019-04-07 11:11:25-07', 'emerging');"
+        "INSERT INTO pf_ip_ban (ip, updated_at, source) VALUES ('198.51.100.0/26', '2019-04-07 11:11:25-07', 'init');"
     )
     cursor.execute(
-        "INSERT INTO pf_ip_ban (ip, updated_at, source) VALUES ('198.51.100.212', '2019-04-14 11:11:25-07', 'emerging');"
+        "INSERT INTO pf_ip_ban (ip, updated_at, source) VALUES ('198.51.100.212', '2019-04-14 11:11:25-07', 'init');"
     )
     cursor.close()
     database.commit()
