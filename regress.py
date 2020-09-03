@@ -62,9 +62,34 @@ def delete(data, rcode, msg):
     print(f"{msg} OK", end='... ')
 
 
+def health(rcode, msg):
+    get = requests.get(f"{API}/v2/healthcheck", headers=HEADERS, auth=IDENT)
+    if get.status_code != rcode:
+        print(f"HEALTH bad status code")
+        print(f"got {get.status_code}, should have been {rcode}")
+        print(get.text)
+        sys.exit(1)
+    if get.text != msg:
+        print("we got")
+        print(get.text)
+        print("expected")
+        print(msg)
+        sys.exit(1)
+    else:
+        print(f"HEALTH OK")
+
+
 def main():
     init()
 
+    health(200, '"OK"\n')
+    data = '[{"IP": "203.0.113.123"}, {"IP": "192.0.2.24"}]'
+    rcode = 204
+    msg = "DELETE DATA"
+    delete(data, rcode, msg)
+    health(500, '{"error":"Too few results, check health"}\n')
+
+    # shouldbe
     shouldbe_data = '[["198.51.100.0/26"], ["198.51.100.212/32"]]'
     get(shouldbe_data)
 
