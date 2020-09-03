@@ -67,6 +67,12 @@ def ip_init():
     cursor.execute(
         "INSERT INTO pf_ip_ban (ip, updated_at, source) VALUES ('198.51.100.212', '2019-04-14 11:11:25-07', 'init');"
     )
+    cursor.execute(
+        "INSERT INTO pf_ip_ban (ip, updated_at, source) VALUES ('203.0.113.123', '2019-04-14 11:11:25-07', 'init');"
+    )
+    cursor.execute(
+        "INSERT INTO pf_ip_ban (ip, updated_at, source) VALUES ('192.0.2.24', '2019-04-14 11:11:25-07', 'init');"
+    )
     cursor.close()
     database.commit()
     database.close()
