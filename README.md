@@ -42,11 +42,14 @@ PG_PASSWORD=hunter2
       - "10.10.10.2:8123:8123"
 ```
 
-# Development
+# User management
 
-There's a regress script (regress.py) to check api's functionality is working
-as intended. The easiest way to do it is to run `ci.sh` script as it will setup
-everything and you don't have anything to do. But you need docker.
+You can't manage the users through the API, you need to do it with SQL
+directly.
+
+~~~
+INSERT INTO USERS (api_user, password, active) VALUES ('machine.example.com', 'hunter2', 1);
+~~~
 
 # API documentation
 
@@ -92,3 +95,10 @@ everything and you don't have anything to do. But you need docker.
 	"IP": "203.0.113.253"
 }]
 `
+
+# Development
+
+There's a regress script (regress.py) to check api's functionality is working
+as intended. The easiest way to do it is to run `ci.sh` script as it will setup
+everything and you don't have anything to do. But you need docker.
+
