@@ -51,6 +51,33 @@ directly.
 INSERT INTO USERS (api_user, password, active) VALUES ('machine.example.com', 'hunter2', 1);
 ~~~
 
+# Usage
+
+A client is provided:
+
+~~~
+$ acacia_client -h
+usage: acacia_client [-h] [-q | -v] {add,delete,cron,count,extsources,list} ...
+
+positional arguments:
+  {add,delete,cron,count,extsources,list}
+                        Type of action you want to do
+    add                 Add a new IP
+    delete              Delete an IP
+    cron                Cron mode
+    count               Count how many IP
+    extsources          Add IP from external sources (emerging threats and blocklist dot de)
+    list                List IP from api
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -q, --quiet           Shut up
+  -v, --verbose         Be verbose
+~~~
+
+To understand more about the whole thing, you can read my [blog
+article](https://chown.me/blog/acacia).
+
 # API documentation
 
 | Endpoint        | Method | Bleh                                               |
