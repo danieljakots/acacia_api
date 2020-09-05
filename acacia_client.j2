@@ -259,7 +259,10 @@ def parse_cli():
     group.add_argument("--only-pubsub", action="store_true", help="Use only pubsub")
 
     subparsers.add_parser("count", help="Count how many IP")
-    subparsers.add_parser("extsources", help="Add IP from external sources")
+    subparsers.add_parser(
+        "extsources",
+        help="Add IP from external sources (emerging threats and blocklist dot de)",
+    )
     subparsers.add_parser("list", help="List IP from api")
     return parser.parse_args()
 
