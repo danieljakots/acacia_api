@@ -217,7 +217,8 @@ def cron(mode):
         if mode == "api":
             api_ban_add(IP)
         elif mode == "pubsub":
-            pubsub(IP)
+            for address in IP:
+                pubsub(address["IP"])
 
     if mode == "pubsub":
         return
