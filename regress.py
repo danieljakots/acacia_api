@@ -79,6 +79,16 @@ def health(rcode, msg):
         print(f"HEALTH OK")
 
 
+def test_ident():
+    get = requests.get(f"{API}/v1/pf", headers=HEADERS, auth=("bad", "credentials"))
+    rcode = 500
+    if get.status_code != rcode:
+        print(f"IDENT bad status code")
+        print(f"got {get.status_code}, should have been {rcode}")
+        sys.exit(1)
+    print("IDENT OK")
+
+
 def main():
     init()
 
@@ -167,8 +177,11 @@ def main():
     shouldbe_data = '[["192.0.2.1/32"], ["198.51.100.0/26"], ["198.51.100.57/32"],'\
         '["198.51.100.212/32"]]'
     get(shouldbe_data, order="IP")
-    print("FINISHED")
 
+    # Test with bad credentials
+    test_ident()
+
+    print("FINISHED")
 
 if __name__ == "__main__":
     main()
