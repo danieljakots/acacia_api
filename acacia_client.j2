@@ -294,7 +294,7 @@ def add_ip_api(IP):
 
 def validate_ip(IP):
     try:
-        ipaddress.ip_address(IP)
+        ipaddress.ip_network(IP)
     except ValueError:
         print(f"{IP} is not valid", file=sys.stderr)
         sys.exit(1)
