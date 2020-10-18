@@ -1,7 +1,5 @@
 #!/bin/sh
 
-docker build . -t api:latest
-
 export PGPASSWORD_POSTGRES=hunter2
 export PGPASSWORD_API=hunter3
 
@@ -21,7 +19,7 @@ _PG_VERSION=12.4
 
 set -e
 
-docker build -t api .
+docker build -t api:latest .
 
 echo "creating network"
 docker network create "$_DOCKER_NET"
