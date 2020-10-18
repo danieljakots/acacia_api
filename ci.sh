@@ -3,8 +3,8 @@
 export PGPASSWORD_POSTGRES=hunter2
 export PGPASSWORD_API=hunter3
 
-_DOCKER_NET=mynet
-_PG_CONTAINER=pgdocker
+_DOCKER_NET=net_acacia_api
+_PG_CONTAINER=pg_acacia_api
 _API_VERSION=latest
 _PG_VERSION=12.4
 
