@@ -130,6 +130,8 @@ def blocklistde():
 
 
 def api_ban_add(IP):
+    if not IP:
+        return
     try:
         post = requests.post(
             f"{API}/v1/pf", headers=HEADERS, json=IP, auth=IDENT, timeout=15
