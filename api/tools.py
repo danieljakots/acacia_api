@@ -102,8 +102,6 @@ def ip_add(data):
             source = entry["source"]
         except KeyError as e:
             return (str(e) + " key is missing", 400)
-        if "/" not in IP:
-            IP = IP + "/32"
         values = (IP, time, source)
         try:
             cursor.execute(

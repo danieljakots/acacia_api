@@ -185,6 +185,15 @@ def main():
     )
     get(shouldbe_data, order="IP")
 
+    # IPv6
+    data = '[{"IP": "2001:db8:3:4:5:6:7:8", "source": "test"}, {"IP": "2001:db8::42", "source": "test"}, {"IP": "2001:db8:24::/48", "source": "test"}]'
+    rcode = 204
+    msg = "GOOD DATA"
+    post(data, rcode, msg)
+    shouldbe_data = '[["198.51.100.0/26"], ["198.51.100.212/32"], ["192.0.2.1/32"], ["198.51.100.57/32"], ["2001:db8:3:4:5:6:7:8/128"], ["2001:db8::42/128"], ["2001:db8:24::/48"]]'
+    get(shouldbe_data)
+
+
     # Test with bad credentials
     test_ident()
 
