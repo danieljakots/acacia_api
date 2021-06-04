@@ -1,6 +1,6 @@
 FROM python:3.9-alpine3.13
 
-RUN addgroup -S snek && adduser -S snek -G snek
+RUN addgroup --gid 8042 -S snek && adduser --uid 8042 -S snek -G snek
 WORKDIR /home/snek/app
 COPY ./requirements.txt /home/snek/requirements.txt
 
