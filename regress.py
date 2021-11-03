@@ -82,7 +82,7 @@ def health(rcode, msg):
 
 def test_ident():
     get = requests.get(f"{API}/v1/pf", headers=HEADERS, auth=("bad", "credentials"))
-    rcode = 500
+    rcode = 503
     if get.status_code != rcode:
         print(f"IDENT bad status code")
         print(f"got {get.status_code}, should have been {rcode}")

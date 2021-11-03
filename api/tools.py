@@ -25,6 +25,8 @@ def check_auth(username, password):
     results = cursor.fetchone()
     cursor.close()
     database.close()
+    if results is None:
+        return False
     if results[0] != password or results[1] != 1:
         return False
     return True
