@@ -25,9 +25,11 @@ import argparse
 import datetime
 import inspect
 import ipaddress
+import random
 import socket
 import subprocess
 import sys
+import time
 
 import redis
 
@@ -213,6 +215,10 @@ def pf_table_content_change(action, ip):
 
 
 def cron(mode):
+    if mode == "api":
+        hostname = socket.gethostname()
+        random.seed(hostname)
+        time.sleep(random.randint(0, 30))
     for table in pf_table_list():
         IP = pf_table_content_list(table)
         if not IP:
