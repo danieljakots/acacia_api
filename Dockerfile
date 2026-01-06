@@ -1,4 +1,4 @@
-FROM python:3.12-alpine3.18
+FROM python:3.14-alpine3.23
 
 RUN addgroup --gid 8042 -S snek && adduser --uid 8042 -S snek -G snek
 WORKDIR /home/snek/app

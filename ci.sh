@@ -6,7 +6,7 @@ export PGPASSWORD_API=hunter3
 _DOCKER_NET=net_acacia_api
 _PG_CONTAINER=pg_acacia_api
 _API_VERSION=latest
-_PG_VERSION=16.1
+_PG_VERSION=18.1
 
 [ $(docker ps -a | grep -c "$_PG_CONTAINER") -gt 0 ] && echo "cleaning pgsql" && \
 	docker rm --force "$_PG_CONTAINER" > /dev/null
