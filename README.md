@@ -1,3 +1,7 @@
+# This repository is deprecated
+
+Please check the [main branch on codeberg](https://codeberg.org/danj/acacia-api).
+
 # acacia_api
 
 This is a basic REST API to store IP addresses in PostgreSQL.
